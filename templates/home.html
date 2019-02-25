@@ -4,10 +4,32 @@
   <meta charset="utf-8">
   <title>InCaseOfEmergency Map</title>
   <h1 align ="center">Welcome to the bullpen</h1>
+  <style>
+    body{
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .searchbox {
+      overflow: hidden;
+      background-color: #e9e9e9
+    }
+    .searchbox input[type=text] {
+      color: red;
+      float: none;
+      padding: 6px;
+      margin: 8px;
+      border: 2px;
+      font-size: 17px;
+    }
+  </style>
 </head>
 <body>
 
 <h1>My First Google Map</h1>
+
+<div align = "center" class = "searchbox">
+  <input type = "text" placeholder = "Search City Here.." >
+</div>
 
 <div align ="center" id="googleMap" style="width:50%;height:400px;margin:100px;"></div>
 
