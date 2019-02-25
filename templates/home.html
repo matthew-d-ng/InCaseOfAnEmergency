@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>InCaseOfEmergency Map</title>
-  <h1 align ="center">How does this work</h1>
+  <h1 align ="center">Welcome to the bullpen</h1>
 </head>
 <body>
 
@@ -22,6 +22,16 @@ var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU&callback=myMap"></script>
+
+<h1>Updates:</h1>
+<ul>
+{% for earthQuake in earthQuakeList %}
+  <li><a href="#">{{ earthQuakeList }}</a></li>
+{% endfor %}
+</ul>
+
+
+
 
 </body>
 </html>
