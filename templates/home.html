@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>InCaseOfEmergency Map</title>
-  <h1 align ="center">Welcome to the bullpen</h1>
+  <h1 align ="center">Earthquakes</h1>
   <style>
     body{
       margin: 0;
@@ -11,15 +11,19 @@
     }
     .searchbox {
       overflow: hidden;
-      background-color: #e9e9e9
+      background-color: black;
     }
     .searchbox input[type=text] {
-      color: red;
+      color: black;
       float: none;
       padding: 6px;
       margin: 8px;
       border: 2px;
       font-size: 17px;
+    }
+    .earthquakeUpdates {
+      overflow hidden;
+      background-color: grey;
     }
   </style>
 </head>
@@ -31,7 +35,7 @@
   <input type = "text" placeholder = "Search City Here.." >
 </div>
 
-<div align ="center" id="googleMap" style="width:50%;height:400px;margin:100px;"></div>
+<div align ="center" id="googleMap" style="width:100%;height:400px;margin:100px;"></div>
 
 <script>
 function myMap() {
@@ -43,7 +47,7 @@ var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU&callback=myMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
 
 <h1>Updates:</h1>
 <ul>
