@@ -1,7 +1,9 @@
 from flask import Flask, render_template
-
+from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
+#to link the database URI at a later time
+#app.config['SQLALCHEMY_DATABASE_URI'] = ''
 @app.route('/')
 def index():
     earthQuakeList = ["USGSted: Prelim M5.5 Earthquake central Mid-Atlantic Ridge Feb-25 15:05 UTC",
