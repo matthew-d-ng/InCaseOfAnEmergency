@@ -4,6 +4,19 @@ app = Flask(__name__)
 
 import math
 
+#earthquake class for storing the rows queried from the database
+class Earthquake:
+    def __init__(self, magnitude, location_name, latitude, longitude, 
+    year_occured, month_occured, day_occured):
+        self.magnitude = magnitude           #float
+        self.location_name = location_name   #String
+        self.latitude = latitude             #double
+        self.longitude = longitude           #double
+        self.year_occured = year_occured     #int
+        self.month_occured = month_occured   #int
+        self.day_occured = day_occured       #int
+
+
 class Boundary:
     def _init_(left, right, top, bottom):
         self.left = left
@@ -33,7 +46,7 @@ def get_distance(latitude, longitude, source_lat, source_long):
 # get_boundary returns an object that contains the latitude and longitude
 # values of a square boundary around a queries city.
 def get_boundary(longitude, latitude):
-    
+
 
 
 @app.route('/')
