@@ -1,38 +1,35 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from flask_mysqldb import MySQL
 app = Flask(__name__)
 
+import os, sys
 import math
 
-#earthquake class for storing the rows queried from the database
-class Earthquake:
-    def __init__(self, magnitude, location_name, latitude, longitude, 
-    year_occured, month_occured, day_occured):
-        self.magnitude = magnitude           #float
-        self.location_name = location_name   #String
-        self.latitude = latitude             #double
-        self.longitude = longitude           #double
-        self.year_occured = year_occured     #int
-        self.month_occured = month_occured   #int
-        self.day_occured = day_occured       #int
+earth_rad = 6371 #km
 
-
-class Boundary:
-    def _init_(left, right, top, bottom):
-        self.left = left
-        self.right = right
-        self.top = top
-        self.bottom = bottom
+# Config MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'sulla'
+app.config['MYSQL_PASSWORD'] = 'pass'
+app.config['MYSQL_DB'] = 'myflask'
+app.config['MYSQL_CHARSET'] = 'utf8mb4'
+app.config['MYSQL_INIT_COMMAND'] = 'SET NAMES utf8mb4;'
+app.config['MYSQL_INIT_COMMAND'] = 'SET CHARACTER SET utf8mb4;'
+app.config['MYSQL_INIT_COMMAND'] = 'SET character_set_connection=utf8mb4;'
+app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_SERVER = utf8mb4;'
+app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_DATABASE = utf8mb4;'
 
 # Find the distance between two places given their latitude and longitude.
-# get_distance returns the distance betwen place1 and place2.
+# get_distance returns the distance in km between place1 and place2.
+# Parameters must be in radians.
 def get_distance(latitude, longitude, source_lat, source_long):
-    # Δσ: central angle, φ1: latitude1,
-    # φ2: latitude2, Δφ: difference b/w lat,
-    # Δλ: difference b/w long
+    # Great Circle Distance
+    # ca: central angle, lat1: latitude1,
+    # lat2: latitude2, latdiff: difference b/w lat,
+    # longdiff: difference b/w long
     #
-    # Δσ = 2 * arcsin √(sin^2(Δφ/2) + cos(φ1) * cos(φ2) * sin^2(Δλ/2))
-    # distance = rΔσ, where r is radius of the given sphere (earth)
+    # ca = 2 * arcsin sqrt(sin^2(latdiff/2) + cos(lat1) * cos(lat2) * sin^2(longdiff/2))
+    # distance = r(ca), where r is radius of the given sphere (earth)
 
     delta_lat = math.fabs(source_lat - latitude)
     delta_long = math.fabs(source_long - longitude)
@@ -42,10 +39,32 @@ def get_distance(latitude, longitude, source_lat, source_long):
     central_angle = 2 * math.asin(math.sqrt(a + b * c))
     return earth_rad * central_angle
 
+# find_nearest finds the nearest places to a given latitude and longitude
+# using the basic Euclidian Distance formula.
+def find_nearest(longitude, latitude, distance):
+    # Create SQL cursor.
+    cur = mysql.connection.cursor()  
 
-# get_boundary returns an object that contains the latitude and longitude
-# values of a square boundary around a queries city.
-def get_boundary(longitude, latitude):
+    # Euclidean distance b/w two points.
+    # d = sqrt((x2-x1)^2 + (y2-y1)^2)
+    d_sqrd = distance * distance
+    query = 'SELECT place FROM earthquakes WHERE POW(latitude - , ' + latitude + \
+            ', 2) + POW(longitude - ' + longitude + ', 2) < ' + d_sqrd +  ';'
+    result = cur.execute(query)
+
+    # This currently only prints raw data.
+    print(query, "\n")
+
+    cur.close()
+
+
+# Request to get the nearest places.
+@app.route('/earthquake', methods=['GET', 'POST'])
+def find_nearest():
+    if request.method == 'POST' and form.validate():
+
+
+    return render_template('find_nearest.html', related_earthquakes=result)
 
 
 

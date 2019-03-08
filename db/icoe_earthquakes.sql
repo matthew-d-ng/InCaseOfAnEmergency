@@ -44,7 +44,7 @@ CREATE TABLE `earthquakes` (
   `magNst` text,
   `status` text,
   `locationSource` text,
-  `magSource` text
+  `magSource` text,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
