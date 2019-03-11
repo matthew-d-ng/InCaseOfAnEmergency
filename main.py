@@ -2,15 +2,19 @@ from flask import Flask, render_template
 from flask_mysqldb import MySQL
 app = Flask(__name__)
 
-import os, sys
 import math
 
 earth_rad = 6371 #km
 
 # Config MySQL
 app.config['MYSQL_HOST'] = 'localhost'
+# To connect to our remote server, uncomment the line below:
+# app.config['MYSQL_HOST'] = '146.185.180.168'
 app.config['MYSQL_USER'] = 'sulla'
-app.config['MYSQL_PASSWORD'] = 'pass'
+# To connect to our remote server, change 'pass' 
+# to the password I [sulla] shared to you. 
+app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+
 app.config['MYSQL_DB'] = 'myflask'
 app.config['MYSQL_CHARSET'] = 'utf8mb4'
 app.config['MYSQL_INIT_COMMAND'] = 'SET NAMES utf8mb4;'
@@ -65,7 +69,6 @@ def find_nearest():
 
 
     return render_template('find_nearest.html', related_earthquakes=result)
-
 
 
 @app.route('/')
