@@ -1,3 +1,7 @@
+# Project Name: In Case of Emergency
+# Group Number: 22
+# Client: Iman, School of Computer Science and Statistics
+
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 app = Flask(__name__)
@@ -7,13 +11,19 @@ import math
 earth_rad = 6371 #km
 
 # Config MySQL
-app.config['MYSQL_HOST'] = 'localhost'
-# To connect to our remote server, uncomment the line below:
+
+# MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
+# To connect to our remote server, uncomment the lines below:
 # app.config['MYSQL_HOST'] = '146.185.180.168'
-app.config['MYSQL_USER'] = 'sulla'
-# To connect to our remote server, change 'pass' 
-# to the password I [sulla] shared to you. 
-app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+# app.config['MYSQL_USER'] = 'sulla'
+# app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+# -----------------------------------------------------------------------------------
+
+# To run locally, uncomment the lines below:
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+# -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'myflask'
 app.config['MYSQL_CHARSET'] = 'utf8mb4'

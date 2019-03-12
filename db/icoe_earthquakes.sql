@@ -3,6 +3,7 @@
 -- Host: localhost    Database: icoe
 -- ------------------------------------------------------
 -- Server version	8.0.12
+-- WARNING: We're facing issues importing this to a Windows MySQL server. 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
