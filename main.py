@@ -9,6 +9,7 @@ app = Flask(__name__)
 import math
 
 earth_rad = 6371 #km
+mysql = MySQL()
 
 # Config MySQL
 
@@ -25,13 +26,15 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
-app.config['MYSQL_DB'] = 'myflask'
+app.config['MYSQL_DB'] = 'icoe'
 app.config['MYSQL_CHARSET'] = 'utf8mb4'
 app.config['MYSQL_INIT_COMMAND'] = 'SET NAMES utf8mb4;'
 app.config['MYSQL_INIT_COMMAND'] = 'SET CHARACTER SET utf8mb4;'
 app.config['MYSQL_INIT_COMMAND'] = 'SET character_set_connection=utf8mb4;'
 app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_SERVER = utf8mb4;'
 app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_DATABASE = utf8mb4;'
+
+mysql.init_app(app)
 
 # Find the distance between two places given their latitude and longitude.
 # get_distance returns the distance in km between place1 and place2.
@@ -57,32 +60,35 @@ def get_distance(latitude, longitude, source_lat, source_long):
 # using the basic Euclidian Distance formula.
 def find_nearest(longitude, latitude, distance):
     # Create SQL cursor.
-    cur = mysql.connection.cursor()  
+    cur = mysql.connect.cursor()  
 
     # Euclidean distance b/w two points.
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
-    query = 'SELECT place FROM earthquakes WHERE POW(latitude - , ' + latitude + \
-            ', 2) + POW(longitude - ' + longitude + ', 2) < ' + d_sqrd +  ';'
+    query = 'SELECT place FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
+            ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
+    print(query, "\n")
     result = cur.execute(query)
 
-    # This currently only prints raw data.
-    print(query, "\n")
+    print(result, "\n")
 
     cur.close()
 
+    return result
 
 # Request to get the nearest places.
-@app.route('/earthquake', methods=['GET', 'POST'])
-def find_nearest():
-    if request.method == 'POST' and form.validate():
+# @app.route('/earthquake', methods=['GET', 'POST'])
+# def find_nearest():
+#     if request.method == 'POST' and form.validate():
 
 
-    return render_template('find_nearest.html', related_earthquakes=result)
+#     return render_template('find_nearest.html', related_earthquakes=result)
 
 
 @app.route('/')
 def index():
+    res = find_nearest(-150.0476, 61.363, 100)
+    print(res)
     earthQuakeList = ["USGSted: Prelim M5.5 Earthquake central Mid-Atlantic Ridge Feb-25 15:05 UTC",
                     "USGSted: Prelim M5.5 Earthquake Macquarie Island region Feb-24 06:00 UTC",
                     "USGSted: Prelim M5.5 Earthquake southern Mid-Atlantic Ridge Feb-22 21:15 UTC",
