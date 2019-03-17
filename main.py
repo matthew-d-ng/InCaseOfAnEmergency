@@ -4,6 +4,7 @@
 
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
+from feed_reader import get_latest_quakes
 app = Flask(__name__)
 
 import math
@@ -15,15 +16,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-# app.config['MYSQL_HOST'] = '146.185.180.168'
-# app.config['MYSQL_USER'] = 'sulla'
-# app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+app.config['MYSQL_HOST'] = '146.185.180.168'
+app.config['MYSQL_USER'] = 'sulla'
+app.config['MYSQL_PASSWORD'] = '22-22-22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_USER'] = 'root'
+#app.config['MYSQL_PASSWORD'] = '' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'icoe'
@@ -89,11 +90,9 @@ def find_nearest(longitude, latitude, distance):
 def index():
     res = find_nearest(-150.0476, 61.363, 100)
     print(res)
-    earthQuakeList = ["USGSted: Prelim M5.5 Earthquake central Mid-Atlantic Ridge Feb-25 15:05 UTC",
-                    "USGSted: Prelim M5.5 Earthquake Macquarie Island region Feb-24 06:00 UTC",
-                    "USGSted: Prelim M5.5 Earthquake southern Mid-Atlantic Ridge Feb-22 21:15 UTC",
-                    "USGSted: Prelim M5.5 Earthquake near the coast of Ecuador Feb-22 10:40 UTC",
-                    "USGSted: Prelim M7.5 Earthquake Peru-Ecuador border region Feb-22 10:17 UTC"]
+    
+    all_quakes = get_latest_quakes()
+    earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
     return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
 
