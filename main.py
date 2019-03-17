@@ -16,9 +16,9 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-app.config['MYSQL_HOST'] = '146.185.180.168'
-app.config['MYSQL_USER'] = 'sulla'
-app.config['MYSQL_PASSWORD'] = '22-22-22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+#app.config['MYSQL_HOST'] = '146.185.180.168'
+#app.config['MYSQL_USER'] = 'sulla'
+#app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
