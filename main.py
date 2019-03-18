@@ -5,9 +5,14 @@
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
-app = Flask(__name__)
+from earthquake import Earthquake
 
+import logging
+import datetime
+import dateutil.parser
 import math
+
+app = Flask(__name__)
 
 earth_rad = 6371 #km
 mysql = MySQL()
@@ -22,9 +27,9 @@ mysql = MySQL()
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-#app.config['MYSQL_HOST'] = 'localhost'
-#app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = '' # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'icoe'
@@ -59,6 +64,7 @@ def get_distance(latitude, longitude, source_lat, source_long):
 
 # find_nearest finds the nearest places to a given latitude and longitude
 # using the basic Euclidian Distance formula.
+# Returns a tuple of every earthquake occurrence data. (Tuple of tuples.)
 def find_nearest(longitude, latitude, distance):
     # Create SQL cursor.
     cur = mysql.connect.cursor()  
@@ -66,16 +72,22 @@ def find_nearest(longitude, latitude, distance):
     # Euclidean distance b/w two points.
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
-    query = 'SELECT place FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
+    query = 'SELECT time, mag, magType, place FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
-    print(query, "\n")
-    result = cur.execute(query)
+    logging.info(query)
 
-    print(result, "\n")
+    res_size = cur.execute(query)
+    results = cur.fetchall()
+    occurences = []
+    for occ in results:
+        # Parse time to datetime.
+        ts = dateutil.parser.parse(occ[0])
+        occurences.append(Earthquake(occ[3], occ[1], ts, 0, 0, 0))
 
     cur.close()
 
-    return result
+    # Returns an array of Earthquakes.
+    return occurences
 
 # Request to get the nearest places.
 # @app.route('/earthquake', methods=['GET', 'POST'])
@@ -89,7 +101,6 @@ def find_nearest(longitude, latitude, distance):
 @app.route('/')
 def index():
     res = find_nearest(-150.0476, 61.363, 100)
-    print(res)
     
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]

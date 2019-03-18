@@ -1,11 +1,11 @@
+import datetime
 
 class Earthquake:
 
-    def __init__(self, title, magnitude, time, date, latitude, longitude, depth):
-        self.title = title
+    def __init__(self, place, magnitude, timestamp, latitude, longitude, depth):
+        self.place = place
         self.magnitude = magnitude
-        self.time = time
-        self.date = date
+        self.timestamp = timestamp
         self.latitude = latitude
         self.longitude = longitude
         self.depth = depth
