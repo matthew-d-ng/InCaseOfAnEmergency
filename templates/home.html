@@ -8,34 +8,38 @@
     body{
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
+      background-color: blue;
+    }
+    .nav{
+      overflow: hidden;
+      background-color: black;
     }
     .searchbox {
       overflow: hidden;
       background-color: black;
+      display: inline-block;
     }
     .searchbox input[type=text] {
       color: black;
-      float: none;
-      padding: 6px;
-      margin: 8px;
-      border: 2px;
+      padding: 3px;
+      margin: 3px;
       font-size: 17px;
     }
-    .earthquakeUpdates {
-      overflow: hidden;
+    .earthquakeUpdateBox {
+      overflow hidden;
       background-color: grey;
+      font-family: Arial, Helvetica, sans-serif;
     }
   </style>
 </head>
 <body>
+  <div class = "nav">
+    <div align = "center" class = "searchbox">
+      <input type = "text" placeholder = "Search City Here.." >
+    </div>
+  </div>
 
-<h1>My First Google Map</h1>
-
-<div align = "center" class = "searchbox">
-  <input type = "text" placeholder = "Search City Here.." >
-</div>
-
-<div align ="center" id="googleMap" style="width:100%;height:400px;margin:100px;"></div>
+<div align ="center" id="googleMap" style="width:100%;height:400px;"></div>
 
 <script>
 function myMap() {
@@ -44,6 +48,22 @@ var mapProp= {
   zoom:5,
 };
 var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+//Used as a marker example
+var marker = new google.maps.Marker({
+  position: {lat: -33.890542, lng: 151.274856},
+  map: map,
+  title: 'Bondi Beach'
+});
+//This for loop cancells out the map for some reason
+//
+//for(var i = 0; i<{{earthQuakeList.length}}; i++){
+//  {{earthQuakeList[i]}} = new google.maps.Marker({
+//    position: {lat: {{earthQuakeList[i]}}.latitude, lng: {{earthQuakeList[i]}}.longitude},
+//    map: map,
+//    title: {{earthQuakeList[i]}}.place
+//  });
+//}
 }
 </script>
 
@@ -52,7 +72,7 @@ var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 <h1>Updates:</h1>
 <ul>
 {% for earthQuake in earthQuakeList %}
-  <li>{{ earthQuake }}</li>
+  <li>{{ earthQuake.place, earthQuake.magnitude, earthQuake.timestring}}</li>
 {% endfor %}
 </ul>
 

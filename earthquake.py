@@ -29,7 +29,7 @@ class Earthquake:
         except ValueError:
             logging.warning("Failed to set timestamp for: %s", self.place)
             return False
-    
+
     def __set_latitude(self, latitude):
         try:
             self.latitude = float(latitude)
@@ -37,7 +37,7 @@ class Earthquake:
         except ValueError:
             logging.warning("Failed to set latitude for: %s", self.place)
             return False
-    
+
     def __set_longitude(self, longitude):
         try:
             self.longitude = float(longitude)

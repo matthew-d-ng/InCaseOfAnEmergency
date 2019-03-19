@@ -3,7 +3,7 @@
 # Client: Iman, School of Computer Science and Statistics
 
 from flask import Flask, render_template
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
 
@@ -68,12 +68,12 @@ def get_distance(latitude, longitude, source_lat, source_long):
 # Returns a tuple of every earthquake occurrence data. (Tuple of tuples.)
 def find_nearest(longitude, latitude, distance):
     # Create SQL cursor.
-    cur = mysql.connect.cursor()  
+    cur = mysql.connect.cursor()
 
     # Euclidean distance b/w two points.
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
-    
+
     query = 'SELECT place, mag, magType, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
     logging.info(query)
@@ -82,7 +82,7 @@ def find_nearest(longitude, latitude, distance):
 
     # Create an array of all the earthquake occurrences.
     occurences = []
-    for occ in results:  
+    for occ in results:
         occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
 
     cur.close()
@@ -116,14 +116,14 @@ def search_results(search):
     else:
         #if search found
          coords = geocoder.google(search.data)
-        
+
         # earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
 
 
 @app.route('/')
 def index():
     res = find_nearest(-150.0476, 61.363, 100)
-    
+
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
