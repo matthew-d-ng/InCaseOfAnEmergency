@@ -11,6 +11,7 @@ import logging
 import datetime
 import dateutil.parser
 import math
+import geocoder
 
 app = Flask(__name__)
 
@@ -96,6 +97,27 @@ def find_nearest(longitude, latitude, distance):
 
 
 #     return render_template('find_nearest.html', related_earthquakes=result)
+
+#Geocoder Fucntion
+import geocoder
+
+def search_results(search):
+    results = []
+    search_string = search.data['search']
+    #print(search_string, "\n")
+
+    if search.data['search'] == '':
+        qry = db_session.query(Album)
+        results = qry.all()
+
+    if not results:
+        flash('No results found!')
+        return redirect('/')
+    else:
+        #if search found
+         coords = geocoder.google(search.data)
+        
+        earthquakes = find_nearest(coords.latitude, coords.longitude, 100):
 
 
 @app.route('/')
