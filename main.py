@@ -72,18 +72,17 @@ def find_nearest(longitude, latitude, distance):
     # Euclidean distance b/w two points.
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
-    query = 'SELECT time, mag, magType, place FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
+    
+    query = 'SELECT place, mag, magType, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
     logging.info(query)
-
-    res_size = cur.execute(query)
+    cur.execute(query)
     results = cur.fetchall()
+
+    # Create an array of all the earthquake occurrences.
     occurences = []
-    # TODO Improvements [sulla]
-    for occ in results:
-        # Parse time to datetime.
-        ts = dateutil.parser.parse(occ[0])
-        occurences.append(Earthquake(occ[3], occ[1], ts, 0, 0, 0))
+    for occ in results:  
+        occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
 
     cur.close()
 
