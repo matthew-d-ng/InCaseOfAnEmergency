@@ -79,6 +79,7 @@ def find_nearest(longitude, latitude, distance):
     res_size = cur.execute(query)
     results = cur.fetchall()
     occurences = []
+    # TODO Improvements [sulla]
     for occ in results:
         # Parse time to datetime.
         ts = dateutil.parser.parse(occ[0])
