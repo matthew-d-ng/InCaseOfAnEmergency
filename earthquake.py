@@ -9,6 +9,7 @@ class Earthquake:
         self.__set_magnitude(magnitude)
         self.mag_type = mag_type
         self.__set_timestamp(timestamp)
+        self.timestring = timestamp
         self.__set_latitude(latitude)
         self.__set_longitude(longitude)
         self.depth = depth

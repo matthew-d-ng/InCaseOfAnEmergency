@@ -117,7 +117,7 @@ def search_results(search):
         #if search found
          coords = geocoder.google(search.data)
         
-        earthquakes = find_nearest(coords.latitude, coords.longitude, 100):
+        # earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
 
 
 @app.route('/')
@@ -127,7 +127,7 @@ def index():
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, )
 
 if __name__ == '__main__':
    app.run(debug = True)
