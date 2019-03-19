@@ -99,7 +99,7 @@ def find_nearest(longitude, latitude, distance):
 #     return render_template('find_nearest.html', related_earthquakes=result)
 
 #Geocoder Fucntion
-import geocoder
+
 
 def search_results(search):
     results = []
