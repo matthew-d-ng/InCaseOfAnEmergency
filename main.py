@@ -2,8 +2,9 @@
 # Group Number: 22
 # Client: Iman, School of Computer Science and Statistics
 
-from flask import Flask, render_template
-# from flask_mysqldb import MySQL
+from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
+from wtforms import Form, StringField, validators
+from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
 
@@ -100,34 +101,35 @@ def find_nearest(longitude, latitude, distance):
 
 #Geocoder Fucntion
 
+class SearchForm(Form):
+    location = StringField('Location', [validators.DataRequired()])
 
-def search_results(search):
-    results = []
-    search_string = search.data['search']
-    #print(search_string, "\n")
+@app.route('/earthquake', methods=['GET', 'POST'])
+def search_nearest():
+    form = SearchForm(request.form)
 
-    if search.data['search'] == '':
-        qry = db_session.query(Album)
-        results = qry.all()
+    if request.method == 'POST' and form.validate():
+        loc = form.location
+        results = []
+
+        coords = geocoder.google(loc)
+        earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
 
     if not results:
         flash('No results found!')
         return redirect('/')
-    else:
-        #if search found
-         coords = geocoder.google(search.data)
 
-        # earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
+    return render_template('home.html', earthquakes=earthquakes)
+
 
 
 @app.route('/')
 def index():
-    res = find_nearest(-150.0476, 61.363, 100)
-
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, )
+
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
 
 if __name__ == '__main__':
    app.run(debug = True)
