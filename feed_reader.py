@@ -32,7 +32,7 @@ def get_latest_quakes():
     latest_quakes_title_list = []
     for listing in latest_quakes.entries:
         eq = parse_listing(listing)
-        latest_quakes_title_list.append(str(str(eq.timestamp), " :", eq.place))
+        latest_quakes_title_list.append(eq.timestring + " :" + eq.place)
 
     return latest_quakes_title_list
 
