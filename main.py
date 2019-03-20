@@ -91,49 +91,33 @@ def find_nearest(longitude, latitude, distance):
     # Returns an array of Earthquakes.
     return occurences
 
-# Request to get the nearest places.
-# @app.route('/earthquake', methods=['GET', 'POST'])
-# def find_nearest():
-#     if request.method == 'POST' and form.validate():
-
-
-#     return render_template('find_nearest.html', related_earthquakes=result)
-
-#Geocoder Fucntion
-
+# Search Form
 class SearchForm(Form):
     location = StringField('Location', [validators.DataRequired()])
 
-@app.route('/earthquake', methods=['GET', 'POST'])
-def search_nearest():
-    form = SearchForm(request.form)
-
-    if request.method == 'POST' and form.validate():
-        loc = form.location
-        results = []
-
-        coords = geocoder.google(loc)
-        # [TODO] This is returning None. [Rory]
-        print(coords.latitude, ", ", coords.longitude)
-        earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
-
-    if not results:
-        flash('No results found!')
-        return redirect('/')
-
-    return render_template('home.html', earthquakes=earthquakes)
-
-
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm(request.form)
+    earthquakes = []
 
+    if request.method == 'POST' and form.validate():
+        loc = form.location.data
+        print(loc, "\n")
+        coords = geocoder.google(loc)
+        print(coords)
+        # [TODO] This is returning None. [Rory]
+        earthquakes = find_nearest(45.15, -75.14, 100)
+
+        if not earthquakes:
+            flash('No results found!')
+            return redirect('/')
+
+    # Requests data for the live feed. 
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form)
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
 
 if __name__ == '__main__':
    app.run(debug = True)
