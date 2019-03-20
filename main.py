@@ -113,6 +113,8 @@ def search_nearest():
         results = []
 
         coords = geocoder.google(loc)
+        # [TODO] This is returning None. [Rory]
+        print(coords.latitude, ", ", coords.longitude)
         earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
 
     if not results:
@@ -125,11 +127,13 @@ def search_nearest():
 
 @app.route('/')
 def index():
+    form = SearchForm(request.form)
+
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form)
 
 if __name__ == '__main__':
    app.run(debug = True)

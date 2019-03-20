@@ -3,82 +3,56 @@
 <head>
   <meta charset="utf-8">
   <title>InCaseOfEmergency Map</title>
-  <h1 align ="center">Earthquakes</h1>
-  <style>
-    body{
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #2A3549;
-      color: #FFFFFF;
-    }
-    .nav{
-      overflow: hidden;
-      background-color: black;
-    }
-    .searchbox {
-      overflow: hidden;
-      background-color: black;
-      display: inline-block;
-    }
-    .searchbox input[type=text] {
-      color: black;
-      padding: 3px;
-      margin: 3px;
-      font-size: 17px;
-    }
-    .earthquakeUpdateBox {
-      overflow hidden;
-      background-color: grey;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-  </style>
+
+  <!-- CSS is on /static/style.css -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
+  <h1 align ="center">Earthquakes</h1>
   <div class = "nav">
-    <div align = "center" class = "searchbox">
-      <input type = "text" placeholder = "Search City Here.." >
-    </div>
+    <form action="/earthquake" method="POST">
+      {{ form.location.label }} {{ form.location }}
+      {{ form.submit }}
+    </form>
   </div>
 
-<div align ="center" id="googleMap" style="width:100%;height:400px;"></div>
+  <div align ="center" id="googleMap" style="width:100%;height:400px;"></div>
 
-<script>
-function myMap() {
-var mapProp= {
-  center:new google.maps.LatLng(51.508742,-0.120850),
-  zoom:5,
-};
-var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+  <script>
+    function myMap() {
+    var mapProp= {
+      center:new google.maps.LatLng(51.508742,-0.120850),
+      zoom:5,
+    };
+    var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 
-//Used as a marker example
-var marker = new google.maps.Marker({
-  position: {lat: -33.890542, lng: 151.274856},
-  map: map,
-  title: 'Bondi Beach'
-});
-//This for loop cancells out the map for some reason
-//
-//for(var i = 0; i<{{earthQuakeList.length}}; i++){
-//  {{earthQuakeList[i]}} = new google.maps.Marker({
-//    position: {lat: {{earthQuakeList[i]}}.latitude, lng: {{earthQuakeList[i]}}.longitude},
-//    map: map,
-//    title: {{earthQuakeList[i]}}.place
-//  });
-//}
-}
-</script>
+    //Used as a marker example
+    var marker = new google.maps.Marker({
+      position: {lat: -33.890542, lng: 151.274856},
+      map: map,
+      title: 'Bondi Beach'
+    });
+    //This for loop cancells out the map for some reason
+    //
+    //for(var i = 0; i<{{earthQuakeList.length}}; i++){
+    //  {{earthQuakeList[i]}} = new google.maps.Marker({
+    //    position: {lat: {{earthQuakeList[i]}}.latitude, lng: {{earthQuakeList[i]}}.longitude},
+    //    map: map,
+    //    title: {{earthQuakeList[i]}}.place
+    //  });
+    //}
+    }
+  </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
 
-<h1>Updates:</h1>
-<ul>
-{% for earthquake in earthQuakeList %}
-  <li>{{ earthquake.timestring, earthquake.magnitude, earthquake.title }}</li>
-{% endfor %}
-</ul>
-
-
-
+  <h1>Updates:</h1>
+    <ul>
+      {% for earthquake in earthQuakeList %}
+        <li>{{ earthquake.timestring, earthquake.magnitude, earthquake.title }}</li>
+      {% endfor %}
+    </ul>
 
 </body>
 </html>
