@@ -2,7 +2,8 @@
 # Group Number: 22
 # Client: Iman, School of Computer Science and Statistics
 
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
+from wtforms import Form, StringField, validators
 from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
@@ -68,12 +69,12 @@ def get_distance(latitude, longitude, source_lat, source_long):
 # Returns a tuple of every earthquake occurrence data. (Tuple of tuples.)
 def find_nearest(longitude, latitude, distance):
     # Create SQL cursor.
-    cur = mysql.connect.cursor()  
+    cur = mysql.connect.cursor()
 
     # Euclidean distance b/w two points.
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
-    
+
     query = 'SELECT place, mag, magType, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
     logging.info(query)
@@ -82,7 +83,7 @@ def find_nearest(longitude, latitude, distance):
 
     # Create an array of all the earthquake occurrences.
     occurences = []
-    for occ in results:  
+    for occ in results:
         occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
 
     cur.close()
@@ -90,44 +91,33 @@ def find_nearest(longitude, latitude, distance):
     # Returns an array of Earthquakes.
     return occurences
 
-# Request to get the nearest places.
-# @app.route('/earthquake', methods=['GET', 'POST'])
-# def find_nearest():
-#     if request.method == 'POST' and form.validate():
+# Search Form
+class SearchForm(Form):
+    location = StringField('Location', [validators.DataRequired()])
 
-
-#     return render_template('find_nearest.html', related_earthquakes=result)
-
-#Geocoder Fucntion
-
-
-def search_results(search):
-    results = []
-    search_string = search.data['search']
-    #print(search_string, "\n")
-
-    if search.data['search'] == '':
-        qry = db_session.query(Album)
-        results = qry.all()
-
-    if not results:
-        flash('No results found!')
-        return redirect('/')
-    else:
-        #if search found
-         coords = geocoder.google(search.data)
-        
-        # earthquakes = find_nearest(coords.latitude, coords.longitude, 100)
-
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    res = find_nearest(-150.0476, 61.363, 100)
-    
+    form = SearchForm(request.form)
+    earthquakes = []
+
+    if request.method == 'POST' and form.validate():
+        loc = form.location.data
+        print(loc, "\n")
+        coords = geocoder.google(loc)
+        print(coords)
+        # [TODO] This is returning None. [Rory]
+        earthquakes = find_nearest(45.15, -75.14, 100)
+
+        if not earthquakes:
+            flash('No results found!')
+            return redirect('/')
+
+    # Requests data for the live feed. 
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, )
+
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
 
 if __name__ == '__main__':
    app.run(debug = True)
