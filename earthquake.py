@@ -4,12 +4,12 @@ import logging
 
 class Earthquake:
 
-    def __init__(self, title, magnitude, mag_type, timestamp, latitude, longitude, depth):
+    def __init__(self, db_id, title, magnitude, timestamp, latitude, longitude, depth):
+        self.id = db_id
         self.title = title
         self.__set_magnitude(magnitude)
-        self.mag_type = mag_type
-        self.__set_timestamp(timestamp)
-        self.timestring = timestamp
+        self.timestamp = timestamp
+        self.timestring = timestamp.strftime("%d-%m-%Y %H:%M:%S")
         self.__set_latitude(latitude)
         self.__set_longitude(longitude)
         self.depth = depth
@@ -22,14 +22,14 @@ class Earthquake:
             logging.warning("Failed to set magnitude for: %s", self.title)
             return False
 
-    def __set_timestamp(self, timestamp):
+    """def __set_timestamp(self, timestamp):
         try:
             self.timestamp = dateutil.parser.parse(timestamp)
             return True
         except ValueError:
             logging.warning("Failed to set timestamp for: %s", self.title)
             return False
-
+    """
     def __set_latitude(self, latitude):
         try:
             self.latitude = float(latitude)

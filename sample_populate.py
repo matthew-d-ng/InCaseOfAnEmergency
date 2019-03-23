@@ -9,6 +9,9 @@
 import mysql.connector
 import config
 
+def insert_to_db:
+    return None
+
 icoe = mysql.connector.connect(user=config.user, password=config.password,
                                                     host=config.host, database=config.db,
                                                     auth_plugin='mysql_native_password')
