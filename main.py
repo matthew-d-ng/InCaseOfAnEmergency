@@ -24,15 +24,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-app.config['MYSQL_HOST'] = '146.185.180.168'
-app.config['MYSQL_USER'] = 'sulla'
-app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+# app.config['MYSQL_HOST'] = '146.185.180.168'
+# app.config['MYSQL_USER'] = 'sulla'
+# app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-#app.config['MYSQL_HOST'] = 'localhost'
-#app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'icoe'
@@ -76,7 +76,7 @@ def find_nearest(longitude, latitude, distance):
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
 
-    query = 'SELECT place, mag, magType, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
+    query = 'SELECT id, place, mag, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
     logging.info(query)
     cur.execute(query)
@@ -85,6 +85,7 @@ def find_nearest(longitude, latitude, distance):
     # Create an array of all the earthquake occurrences.
     occurences = []
     for occ in results:
+        # [TODO] added a temp ID.
         occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
 
     cur.close()
