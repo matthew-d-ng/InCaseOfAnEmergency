@@ -7,6 +7,7 @@ from wtforms import Form, StringField, validators
 from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
+from emails import email_form
 
 import logging
 import datetime
@@ -23,15 +24,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-#app.config['MYSQL_HOST'] = '146.185.180.168'
-#app.config['MYSQL_USER'] = 'sulla'
-#app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+app.config['MYSQL_HOST'] = '146.185.180.168'
+app.config['MYSQL_USER'] = 'sulla'
+app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_USER'] = 'root'
+#app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'icoe'

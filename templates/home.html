@@ -49,8 +49,8 @@
 
   <h1>Updates:</h1>
     <ul>
-      {% for earthquake in earthQuakeList %}
-        <li>{{ earthquake.timestring, earthquake.magnitude, earthquake.title }}</li>
+      {% for eq in earthQuakeList %}
+        <li>{{eq.timestring + " : " + eq.title}}</li>
       {% endfor %}
     </ul>
 
