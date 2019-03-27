@@ -102,7 +102,7 @@ class MailingForm(Form):
 
 @app.route('/subscribe', method=['POST']
 def subscribe():
-    )
+    
 
 # Search Form
 class SearchForm(Form):
@@ -131,7 +131,6 @@ def index():
     
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
     print(json_str)
-
 
     # Requests data for the live feed. 
     all_quakes = get_latest_quakes()
