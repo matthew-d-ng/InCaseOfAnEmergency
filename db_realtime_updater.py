@@ -53,7 +53,7 @@ def test_feed():
         earthquake = parse_listing(listing)
         print(earthquake.id)
         print(earthquake.title)
-        print(earthquake.time_string)
+        print(earthquake.time_string())
         print(earthquake.magnitude)
         print(earthquake.latitude)
         print(earthquake.longitude)
