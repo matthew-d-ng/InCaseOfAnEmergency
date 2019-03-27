@@ -100,8 +100,8 @@ class MailingForm(Form):
     place = StringField('place', [validators.DataRequired()])
     magnitude = StringField('magnitude', [validators.DataRequired()])
 
-@app.route('/subscribe', method=['POST']
-def subscribe():
+# @app.route('/subscribe', method=['POST']
+# def subscribe():
     
 
 # Search Form
