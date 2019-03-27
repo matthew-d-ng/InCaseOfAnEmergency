@@ -94,6 +94,16 @@ def find_nearest(longitude, latitude, distance):
     # Returns an array of Earthquakes.
     return occurences
 
+# Mailing List Form
+class MailingForm(Form):
+    email = StringField('email', [validators.DataRequired()])
+    place = StringField('place', [validators.DataRequired()])
+    magnitude = StringField('magnitude', [validators.DataRequired()])
+
+@app.route('/subscribe', method=['POST']
+def subscribe():
+    )
+
 # Search Form
 class SearchForm(Form):
     location = StringField('Location', [validators.DataRequired()])
@@ -120,8 +130,8 @@ def index():
         earthquakes.append(r.__dict__)
     
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
-    json_str = '{"earthquakes": }'
     print(json_str)
+
 
     # Requests data for the live feed. 
     all_quakes = get_latest_quakes()
