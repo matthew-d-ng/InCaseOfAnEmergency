@@ -97,11 +97,27 @@ def find_nearest(longitude, latitude, distance):
 # Mailing List Form
 class MailingForm(Form):
     email = StringField('email', [validators.DataRequired()])
-    place = StringField('place', [validators.DataRequired()])
+    location = StringField('location', [validators.DataRequired()])
     magnitude = StringField('magnitude', [validators.DataRequired()])
 
-# @app.route('/subscribe', method=['POST']
-# def subscribe():
+@app.route('/subscribe', methods=['GET','POST'])
+def subscribe():
+    print("here")
+    form = MailingForm(request.form)
+    if form.validate():
+        email = form.email.data
+        loc = form.location.data
+        mag = form.magnitude.data
+
+        con = mysql.connect
+        cur = con.cursor()
+        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(email=email, loc=loc, mag=mag)
+        print(query)
+        res = cur.execute(query)
+        con.commit()
+        print(res)
+    
+    return redirect('/')
     
 
 # Search Form
@@ -110,11 +126,12 @@ class SearchForm(Form):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = SearchForm(request.form)
+    mform = MailingForm()
+    sform = SearchForm(request.form)
     results = []
 
-    if request.method == 'POST' and form.validate():
-        loc = form.location.data
+    if request.method == 'POST' and sform.validate():
+        loc = sform.location.data
         coords = geocoder.google(loc)
         latlng = coords.latlng
         print(coords, " ", latlng[1], " ", latlng[0])
@@ -137,7 +154,7 @@ def index():
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
+    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, searchform=sform, mailingform = mform, earthquakes=earthquakes)
 
 if __name__ == '__main__':
    app.run(debug = True)

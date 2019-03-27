@@ -12,8 +12,8 @@
   <h1 align ="center">Earthquakes</h1>
   <div class = "nav">
     <form action="/" method="POST">
-      {{ form.location.label }} {{ form.location }}
-      {{ form.submit }}
+      {{ searchform.location.label }} {{ searchform.location }}
+      {{ searchform.submit }}
     </form>
   </div>
 
@@ -53,6 +53,15 @@
         <li>{{eq.time_string() + " : " + eq.title}}</li>
       {% endfor %}
     </ul>
+
+    <br>
+
+    <form action="/subscribe" method="POST">
+      {{ mailingform.email.label }} {{ mailingform.email }}
+      {{ mailingform.location.label }} {{ mailingform.location }}
+      {{ mailingform.magnitude.label }} {{ mailingform.magnitude }}
+      <input type=submit value=subscribe>
+    </form>
 
 </body>
 </html>
