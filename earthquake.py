@@ -10,8 +10,6 @@ class Earthquake:
         self.title = title
         self.__set_magnitude(magnitude)
         self.__set_timestamp(timestamp)
-        # self.timestamp = timestamp
-        # self.timestring = timestamp.
         self.__set_latitude(latitude)
         self.__set_longitude(longitude)
         self.depth = depth

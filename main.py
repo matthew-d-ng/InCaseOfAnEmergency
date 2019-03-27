@@ -14,6 +14,7 @@ import datetime
 import dateutil.parser
 import math
 import geocoder
+import json
 
 app = Flask(__name__)
 
@@ -100,19 +101,27 @@ class SearchForm(Form):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm(request.form)
-    earthquakes = []
+    results = []
 
     if request.method == 'POST' and form.validate():
         loc = form.location.data
-        print(loc, "\n")
         coords = geocoder.google(loc)
-        print(coords)
+        latlng = coords.latlng
+        print(coords, " ", latlng[1], " ", latlng[0])
         # [TODO] This is returning None. [Rory]
-        earthquakes = find_nearest(45.15, -75.14, 100)
+        results = find_nearest(latlng[1], latlng[0], 100)
 
-        if not earthquakes:
+        if not results:
             flash('No results found!')
             return redirect('/')
+    
+    earthquakes = []
+    for r in results:
+        earthquakes.append(r.__dict__)
+    
+    json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
+    json_str = '{"earthquakes": }'
+    print(json_str)
 
     # Requests data for the live feed. 
     all_quakes = get_latest_quakes()
