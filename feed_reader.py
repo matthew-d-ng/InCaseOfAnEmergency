@@ -32,29 +32,12 @@ def get_latest_quakes():
     latest_quakes_title_list = []
     for listing in latest_quakes["features"]:
         eq = parse_listing(listing)
+        #print(eq.title)
+        #print("\nlatitude" , eq.latitude)
+        #print("\nlongitude" , eq.longitude)
         latest_quakes_title_list.append(eq)
 
     return latest_quakes_title_list
 
-def get_latest_quakes_filtered(magnitude, location):
-    response = requests.get(FEED)
-    latest_quakes = json.loads(response.text)
-    latest_quakes_title_list = []
-    for listing in latest_quakes["features"]:
-        eq = parse_listing(listing)
-        if(listing.magnitude >= magnitude):
-            location = geocoder.google(location)
-            coords = location.latlng
-            is_within = is_within_radius(coords[0], coords[1], 100, listing.latitude, listing.longitude)
-            if(is_within):
-                latest_quakes_title_list.append(eq)
-
-    return latest_quakes_title_list
     
 
-def is_within_radius(centre_lat, centre_long, radius, input_lat, input_long):
-    distance = math.sqrt((input_lat - centre_lat)**2 + (input_long - centre_long)**2)
-    if(distance <= radius):
-        return True
-    else:
-        return False

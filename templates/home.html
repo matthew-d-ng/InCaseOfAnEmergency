@@ -33,7 +33,19 @@
       map: map,
       title: 'Bondi Beach'
     });
-    //This for loop cancells out the map for some reason
+    
+    }
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
+
+  <a href="/realtime.html">realtime feed</a>
+</body>
+</html>
+
+<!-- this code broke the website if it was left in the javascript section even when commented out so i moved it down here-->
+<!--
+  //for loop cancells out the map for some reason
     //
     //for(var i = 0; i<{{earthQuakeList.length}}; i++){
     //  {{earthQuakeList[i]}} = new google.maps.Marker({
@@ -41,18 +53,5 @@
     //    map: map,
     //    title: {{earthQuakeList[i]}}.place
     //  });
-    //}
-    }
-  </script>
-
-  <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
-
-  <h1>Updates:</h1>
-    <ul>
-      {% for eq in earthQuakeList %}
-        <li>{{eq.time_string() + " : " + eq.title}}</li>
-      {% endfor %}
-    </ul>
-
-</body>
-</html>
+    // }
+-->

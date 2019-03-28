@@ -25,9 +25,9 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-# app.config['MYSQL_HOST'] = '146.185.180.168'
-# app.config['MYSQL_USER'] = 'sulla'
-# app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+#app.config['MYSQL_HOST'] = '146.185.180.168'
+#app.config['MYSQL_USER'] = 'sulla'
+#app.config['MYSQL_PASSWORD'] = '22.22.22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
@@ -131,13 +131,16 @@ def index():
     
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
     print(json_str)
-
-    # Requests data for the live feed. 
-    all_quakes = get_latest_quakes()
-    earthQuakeList = all_quakes[0:9]
+    
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
+    return render_template('home.html',  APIKEY = APIKEY, form=form, earthquakes=earthquakes)
+
+@app.route('/realtime.html/')
+def realtime():
+    all_quakes = get_latest_quakes()
+    earthQuakeList = all_quakes[0:9]
+    return render_template('realtime.html', earthQuakeList = earthQuakeList)
 
 if __name__ == '__main__':
    app.run(debug = True)

@@ -1,0 +1,6 @@
+<h1>Updates:</h1>
+    <ul>
+      {% for eq in earthQuakeList %}
+        <li>{{eq.time_string() + " : " + eq.title}}</li>
+      {% endfor %}
+    </ul>
