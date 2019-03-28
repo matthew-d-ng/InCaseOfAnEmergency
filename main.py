@@ -14,6 +14,7 @@ import datetime
 import dateutil.parser
 import math
 import geocoder
+import json
 
 app = Flask(__name__)
 
@@ -24,15 +25,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-app.config['MYSQL_HOST'] = '146.185.180.168'
-app.config['MYSQL_USER'] = 'sulla'
-app.config['MYSQL_PASSWORD'] = 'pass' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+#app.config['MYSQL_HOST'] = '146.185.180.168'
+#app.config['MYSQL_USER'] = 'sulla'
+#app.config['MYSQL_PASSWORD'] = '22.22.22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-#app.config['MYSQL_HOST'] = 'localhost'
-#app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config['MYSQL_DB'] = 'icoe'
@@ -76,7 +77,7 @@ def find_nearest(longitude, latitude, distance):
     # d = sqrt((x2-x1)^2 + (y2-y1)^2)
     d_sqrd = distance * distance
 
-    query = 'SELECT place, mag, magType, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
+    query = 'SELECT id, place, mag, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
             ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
     logging.info(query)
     cur.execute(query)
@@ -85,12 +86,23 @@ def find_nearest(longitude, latitude, distance):
     # Create an array of all the earthquake occurrences.
     occurences = []
     for occ in results:
+        # [TODO] added a temp ID.
         occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
 
     cur.close()
 
     # Returns an array of Earthquakes.
     return occurences
+
+# Mailing List Form
+class MailingForm(Form):
+    email = StringField('email', [validators.DataRequired()])
+    place = StringField('place', [validators.DataRequired()])
+    magnitude = StringField('magnitude', [validators.DataRequired()])
+
+# @app.route('/subscribe', method=['POST']
+# def subscribe():
+
 
 # Search Form
 class SearchForm(Form):
@@ -100,32 +112,33 @@ APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm(request.form)
-    earthquakes = []
+    results = []
 
     if request.method == 'POST' and form.validate():
         loc = form.location.data
-        print(loc, "\n")
         coords = geocoder.google(loc)
-        print(coords)
+        latlng = coords.latlng
+        print(coords, " ", latlng[1], " ", latlng[0])
         # [TODO] This is returning None. [Rory]
-        earthquakes = find_nearest(45.15, -75.14, 100)
+        results = find_nearest(latlng[1], latlng[0], 100)
 
-        if not earthquakes:
+        if not results:
             flash('No results found!')
             return redirect('/')
 
-    # Requests data for the live feed.
+    earthquakes = []
+    for r in results:
+        earthquakes.append(r.__dict__)
+
+    json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
+    print(json_str)
+
+    return render_template('home.html',  APIKEY = APIKEY, form=form, earthquakes=earthquakes)
+@app.route('/realtime.html/')
+def realtime():
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
-
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
-
-@app.route('/updates')
-def updates():
-    all_quakes = get_latest_quakes()
-    earthQuakeList = all_quakes[0:9]
-
-    return render_template('updates.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
+    return render_template('realtime.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
 
 if __name__ == '__main__':
    app.run(debug = True)

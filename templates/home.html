@@ -33,15 +33,6 @@
       map: map,
       title: 'Bondi Beach'
     });
-    //This for loop cancels out the map for some reason
-    //
-    //for(var i = 0; i<{{earthQuakeList.length}}; i++){
-    //  {{earthQuakeList[i]}} = new google.maps.Marker({
-    //    position: {lat: {{earthQuakeList[i]}}.latitude, lng: {{earthQuakeList[i]}}.longitude},
-    //    map: map,
-    //    title: {{earthQuakeList[i]}}.place
-    //  });
-    //}
     }
   </script>
 
@@ -54,5 +45,6 @@
       {% endfor %}
     </ul>
 
+  <a href="/realtime.html">realtime feed</a>
 </body>
 </html>
