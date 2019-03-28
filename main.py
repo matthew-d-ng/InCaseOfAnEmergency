@@ -96,6 +96,7 @@ def find_nearest(longitude, latitude, distance):
 class SearchForm(Form):
     location = StringField('Location', [validators.DataRequired()])
 
+APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm(request.form)
@@ -113,12 +114,18 @@ def index():
             flash('No results found!')
             return redirect('/')
 
-    # Requests data for the live feed. 
+    # Requests data for the live feed.
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
-    APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
     return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, form=form, earthquakes=earthquakes)
+
+@app.route('/updates')
+def updates():
+    all_quakes = get_latest_quakes()
+    earthQuakeList = all_quakes[0:9]
+
+    return render_template('updates.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY)
 
 if __name__ == '__main__':
    app.run(debug = True)

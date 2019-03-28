@@ -33,7 +33,7 @@
       map: map,
       title: 'Bondi Beach'
     });
-    //This for loop cancells out the map for some reason
+    //This for loop cancels out the map for some reason
     //
     //for(var i = 0; i<{{earthQuakeList.length}}; i++){
     //  {{earthQuakeList[i]}} = new google.maps.Marker({
@@ -49,8 +49,8 @@
 
   <h1>Updates:</h1>
     <ul>
-      {% for eq in earthQuakeList %}
-        <li>{{eq.timestring + " : " + eq.title}}</li>
+      {% for earthquake in earthQuakeList %}
+        <li>{{ earthquake.timestring, earthquake.magnitude, earthquake.title }}</li>
       {% endfor %}
     </ul>
 

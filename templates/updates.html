@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>InCaseOfEmergency Map</title>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class = "navUpdates">
+    <a display="inline" href='/'>Home</a>
+    <a display="inline" href='/updates'>Refresh Updates</a>
+
+    <h1 >Live Updates</h1>
+  </div>
+  <div class="container">
+    <div class="updateList" display="inline">
+      <ul>
+      {% for earthQuake in earthQuakeList %}
+        <p>
+          Location: {{earthQuake.place}}
+          <br>
+          Magnitude: {{earthQuake.magnitude}}
+          <br>
+          Lat, Lon: {{earthQuake.latitude}}, {{earthQuake.longitude}}
+        </p>
+      {% endfor %}
+      </ul>
+
+    </div>
+
+    <div display= "inline" align ="center" id="googleMap" style="width:50%;height:81vh;"></div>
+  </div>
+  <br>
+  <p id="demo"></p>
+<script>
+//var list = new Array();
+//list = {{ earthQuakeList }};
+function myMap() {
+
+  var map = new google.maps.Map(document.getElementById("googleMap"), {
+    zoom: 4,
+    center:new google.maps.LatLng(51.508742,-0.120850)
+  });
+
+  var marker = new google.maps.Marker({
+    position: new google.maps.LatLng(-33.890542, 151.274856),
+    map: map,
+    title: 'Bondi Beach'
+  });
+  //for(earthQuake in list){
+  //  console.log("here");
+  //  var marker = new google.maps.Marker({
+  //    position: new google.maps.LatLng(earthQuake.latitude, earthQuake.longitude),
+  //    map: map,
+  //    title: earthQuake.place
+  //  });
+  //}
+}
+
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
+</body>
+</html>
