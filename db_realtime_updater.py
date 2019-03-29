@@ -2,6 +2,7 @@ import time
 from earthquake import Earthquake
 import requests, json
 from feed_reader import parse_listing
+from emails import send_emails
 # import the sql connector we're using too
 
 """ Checks the Atom feed from USGS every 15 minutes """
@@ -53,7 +54,7 @@ def test_feed():
         earthquake = parse_listing(listing)
         print(earthquake.id)
         print(earthquake.title)
-        print(earthquake.time_string)
+        print(earthquake.time_string())
         print(earthquake.magnitude)
         print(earthquake.latitude)
         print(earthquake.longitude)
