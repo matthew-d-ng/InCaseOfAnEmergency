@@ -2,7 +2,16 @@
 # Group Number: 22
 # Client: Iman, School of Computer Science and Statistics
 
-from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
+from flask import (
+    Flask,
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    session,
+    request,
+    logging,
+)
 from wtforms import Form, StringField, validators
 from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
@@ -18,7 +27,7 @@ import json
 
 app = Flask(__name__)
 
-earth_rad = 6371 #km
+earth_rad = 6371  # km
 mysql = MySQL()
 
 # Config MySQL
@@ -31,18 +40,20 @@ mysql = MySQL()
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'pass' # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config["MYSQL_HOST"] = "localhost"
+app.config["MYSQL_USER"] = "root"
+app.config[
+    "MYSQL_PASSWORD"
+] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
-app.config['MYSQL_DB'] = 'icoe'
-app.config['MYSQL_CHARSET'] = 'utf8mb4'
-app.config['MYSQL_INIT_COMMAND'] = 'SET NAMES utf8mb4;'
-app.config['MYSQL_INIT_COMMAND'] = 'SET CHARACTER SET utf8mb4;'
-app.config['MYSQL_INIT_COMMAND'] = 'SET character_set_connection=utf8mb4;'
-app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_SERVER = utf8mb4;'
-app.config['MYSQL_INIT_COMMAND'] = 'SET SESSION CHARACTER_SET_DATABASE = utf8mb4;'
+app.config["MYSQL_DB"] = "icoe"
+app.config["MYSQL_CHARSET"] = "utf8mb4"
+app.config["MYSQL_INIT_COMMAND"] = "SET NAMES utf8mb4;"
+app.config["MYSQL_INIT_COMMAND"] = "SET CHARACTER SET utf8mb4;"
+app.config["MYSQL_INIT_COMMAND"] = "SET character_set_connection=utf8mb4;"
+app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_SERVER = utf8mb4;"
+app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_DATABASE = utf8mb4;"
 
 mysql.init_app(app)
 
@@ -66,41 +77,48 @@ def get_distance(latitude, longitude, source_lat, source_long):
     central_angle = 2 * math.asin(math.sqrt(a + b * c))
     return earth_rad * central_angle
 
+
 # find_nearest finds the nearest places to a given latitude and longitude
 # using the basic Euclidian Distance formula.
 # Returns a tuple of every earthquake occurrence data. (Tuple of tuples.)
-def find_nearest(longitude, latitude, distance):
+def find_nearest(latitude, longitude, distance):
     # Create SQL cursor.
     cur = mysql.connect.cursor()
 
     # Euclidean distance b/w two points.
-    # d = sqrt((x2-x1)^2 + (y2-y1)^2)
+    # p = (p1, p2) ; q = (q1, q2)
+    # d = sqrt((q1-p1)^2 + (q2-p2)^2)
     d_sqrd = distance * distance
 
-    query = 'SELECT id, place, mag, time, latitude, longitude, depth FROM earthquakes WHERE POW(latitude -  ' + "(" + str(latitude) + ")" + \
-            ', 2) + POW(longitude - ' + "(" + str(longitude) +  ")" + ', 2) < ' + str(d_sqrd) +  ';'
+    query = "SELECT id, place, mag, time, latitude, longitude, \
+            depth FROM earthquakes WHERE \
+            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 100"
     logging.info(query)
-    cur.execute(query)
+    cur.execute(query, (latitude, longitude))
     results = cur.fetchall()
 
     # Create an array of all the earthquake occurrences.
     occurences = []
     for occ in results:
         # [TODO] added a temp ID.
-        occurences.append(Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6]))
+        occurences.append(
+            Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6])
+        )
 
     cur.close()
 
     # Returns an array of Earthquakes.
     return occurences
 
+
 # Mailing List Form
 class MailingForm(Form):
-    email = StringField('email', [validators.DataRequired()])
-    location = StringField('location', [validators.DataRequired()])
-    magnitude = StringField('magnitude', [validators.DataRequired()])
+    email = StringField("email", [validators.DataRequired()])
+    location = StringField("location", [validators.DataRequired()])
+    magnitude = StringField("magnitude", [validators.DataRequired()])
 
-@app.route('/subscribe', methods=['GET','POST'])
+
+@app.route("/subscribe", methods=["GET", "POST"])
 def subscribe():
     print("here")
     form = MailingForm(request.form)
@@ -111,50 +129,68 @@ def subscribe():
 
         con = mysql.connect
         cur = con.cursor()
-        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(email=email, loc=loc, mag=mag)
+        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
+            email=email, loc=loc, mag=mag
+        )
         print(query)
         res = cur.execute(query)
         con.commit()
         print(res)
-    
-    return redirect('/')
-    
+
+    return redirect("/")
+
 
 # Search Form
 class SearchForm(Form):
-    location = StringField('Location', [validators.DataRequired()])
+    location = StringField("Location", [validators.DataRequired()])
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route("/", methods=["GET", "POST"])
 def index():
+    # This is the centre point of the map.
+    # When unset, default is in Dublin, Ireland.
+    center = {"latitude": 53.350140, "longitude": -6.266155}
     mform = MailingForm()
     sform = SearchForm(request.form)
     results = []
 
-    if request.method == 'POST' and sform.validate():
+    if request.method == "POST" and sform.validate():        
         loc = sform.location.data
         coords = geocoder.google(loc)
         latlng = coords.latlng
+        # Set centre as the search location.
+        center = {"latitude": latlng[0], "longitude": latlng[1]}
         print(coords, " ", latlng[1], " ", latlng[0])
         # [TODO] This is returning None. [Rory]
-        results = find_nearest(latlng[1], latlng[0], 100)
+        results = find_nearest(latlng[0], latlng[1], 100)
 
         if not results:
-            flash('No results found!')
-            return redirect('/')
-    
+            flash("No results found!")
+            return redirect("/")
+
     earthquakes = []
     for r in results:
         earthquakes.append(r.__dict__)
-    
+
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
     print(json_str)
 
-    # Requests data for the live feed. 
+    # Requests data for the live feed.
     all_quakes = get_latest_quakes()
     earthQuakeList = all_quakes[0:9]
     APIKEY = "AIzaSyD1XIdaoi1PCBfttZe85pPnRBw25ZSADuU"
 
-    return render_template('home.html', earthQuakeList = earthQuakeList, APIKEY = APIKEY, searchform=sform, mailingform = mform, earthquakes=earthquakes)
+    return render_template(
+        "home.html",
+        earthQuakeList=earthQuakeList,
+        APIKEY=APIKEY,
+        searchform=sform,
+        mailingform=mform,
+        earthquakes=json_str,
+        center=center,
+    )
 
-if __name__ == '__main__':
-   app.run(debug = True)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
