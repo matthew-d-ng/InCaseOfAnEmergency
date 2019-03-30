@@ -42,9 +42,7 @@ mysql = MySQL()
 # To run locally, uncomment the lines below:
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config[
-    "MYSQL_PASSWORD"
-] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -165,12 +163,14 @@ def index():
         results = find_nearest(latlng[0], latlng[1], 100)
 
         if not results:
-            flash("No results found!")
+            #the flash line was breaking the code
+            #flash("No results found!")
             return redirect("/")
 
     earthquakes = []
-    for r in results:
-        earthquakes.append(r.__dict__)
+    if len(results) != 0:
+        for r in results:
+            earthquakes.append(r.__dict__)
 
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
     print(json_str)
@@ -193,4 +193,5 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'

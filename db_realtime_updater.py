@@ -25,9 +25,7 @@ def add_to_db(earthquake):
     pass     # placeholder, remove return when body written
 
 def notify_mailing_list(earthquake):
-
-    # mailing list code
-    pass    # placeholder, remove return when body written
+    send_emails()
 
 def monitor_feed():
     # Infinitely loop, sleep for WAIT_TIME seconds after every iteration
