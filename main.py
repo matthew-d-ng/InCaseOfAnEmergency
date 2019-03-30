@@ -190,7 +190,6 @@ def index():
         center=center,
     )
 
-
 if __name__ == "__main__":
     app.run(debug=True)
     app.secret_key = 'super secret key'
