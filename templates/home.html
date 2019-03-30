@@ -23,7 +23,6 @@
   <script>
 
     function myMap() {
-<<<<<<< HEAD
       var mapProp = {
         center: new google.maps.LatLng({{ center.latitude }}, {{ center.longitude }}),
         zoom: 5,
@@ -45,20 +44,6 @@
         title: earthquakes[i].title,
       });
       bounds.extend(position);
-=======
-    var mapProp= {
-      center:new google.maps.LatLng(51.508742,-0.120850),
-      zoom:5,
-    };
-    var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
-
-    //Used as a marker example
-    var marker = new google.maps.Marker({
-      position: {lat: -33.890542, lng: 151.274856},
-      map: map,
-      title: 'Bondi Beach'
-    });
->>>>>>> f832acd92188322361f2a9005f6799f2426236c3
     }
     map.fitBounds(position);
   
@@ -68,7 +53,6 @@
   <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
 
   <h1>Updates:</h1>
-<<<<<<< HEAD
   <ul>
     {% for eq in earthQuakeList %}
     <li>{{eq.time_string() + " : " + eq.title}}</li>
@@ -83,13 +67,6 @@
     {{ mailingform.magnitude.label }} {{ mailingform.magnitude }}
     <input type=submit value=subscribe>
   </form>
-=======
-    <ul>
-      {% for earthquake in earthQuakeList %}
-        <li>{{ earthquake.timestring, earthquake.magnitude, earthquake.title }}</li>
-      {% endfor %}
-    </ul>
->>>>>>> f832acd92188322361f2a9005f6799f2426236c3
 
   <a href="/realtime.html">realtime feed</a>
 </body>
