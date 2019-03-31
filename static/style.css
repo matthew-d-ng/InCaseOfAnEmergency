@@ -17,17 +17,39 @@ body {
   height: 80vh;
 }
 
-#search {
-  position: absolute;
-  min-width: 50%;
-  max-width: 80%;
-  z-index: 3;
-  margin-left: 15px;
-  margin-top: 15px;
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
 }
 
-.btn .btn-outline-secondary {
-  background-color: #FFFFFF !important;
+.form-inline label {
+  margin: 5px 0 0 0;
+}
+
+.form-inline input {
+  vertical-align: middle;
+  margin: 5px 0px 5px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+
+#search {
+  position: absolute;
+  min-width: 40%;
+  max-width: 80%;
+  z-index: 3;
+  margin: 15px;
+}
+
+#mailing {
+  position: relative;
+  padding: 20px;
+  margin: 20px;
+  width: 400px;
+  background-color: #C1D4E0;
 }
 
 @media only screen and (max-width: 400px) {

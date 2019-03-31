@@ -157,6 +157,7 @@ def index():
     if request.method == "POST" and sform.validate():        
         loc = sform.location.data
         coords = geocoder.google(loc)
+        sform.location.default = coords.city
         latlng = coords.latlng
         # Set centre as the search location.
         center = {"latitude": latlng[0], "longitude": latlng[1]}
