@@ -1,3 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>InCaseOfEmergency Map</title>
+
+  <!-- CSS is on /static/style.css -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <h1 align="center">Earthquakes</h1>
+  <div class="nav">
+    <form action="/" method="POST">
+      {{ searchform.location.label }} {{ searchform.location }}
+      {{ searchform.submit }}
+    </form>
+  </div>
+
+  <div align="center" id="googleMap"></div>
+
+  <script>
+
+    function myMap() {
+      var mapProp = {
+        center: new google.maps.LatLng({{ center.latitude }}, {{ center.longitude }}),
+        zoom: 5,
+      };
+
+    var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+    var earthquakes = JSON.parse({{ earthquakes| tojson }});
+
+    // if (earthquakes.length > 1) {
+    //   map.fitBounds(bounds);
+    // }
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < earthquakes.length; i++) {
+      var position = new google.maps.LatLng(earthquakes[i].latitude, earthquakes[i].longitude);
+      var marker = new google.maps.Marker({
+        position: { lat: earthquakes[i].latitude, lng: earthquakes[i].longitude },
+        map: map,
+        title: earthquakes[i].title,
+      });
+      bounds.extend(position);
+    }
+    map.fitBounds(position);
+  
+    };
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
+
+  <h1>Updates:</h1>
+  <ul>
+    {% for eq in earthQuakeList %}
+    <li>{{eq.time_string() + " : " + eq.title}}</li>
+    {% endfor %}
+  </ul>
+
+  <br>
+
+  <form action="/subscribe" method="POST">
+    {{ mailingform.email.label }} {{ mailingform.email }}
+    {{ mailingform.location.label }} {{ mailingform.location }}
+    {{ mailingform.magnitude.label }} {{ mailingform.magnitude }}
+    <input type=submit value=subscribe>
+  </form>
+
+  <a href="/realtime.html">realtime feed</a>
+</body>
+
+</html>
+
+
+
+
 # Project Name: In Case of Emergency
 # Group Number: 22
 # Client: Iman, School of Computer Science and Statistics
@@ -42,7 +120,9 @@ mysql = MySQL()
 # To run locally, uncomment the lines below:
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config[
+    "MYSQL_PASSWORD"
+] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -152,8 +232,6 @@ def index():
     sform = SearchForm(request.form)
     results = []
 
-    sform.location.default = "Dublin, Ireland"
-
     if request.method == "POST" and sform.validate():        
         loc = sform.location.data
         coords = geocoder.google(loc)
@@ -165,20 +243,15 @@ def index():
         results = find_nearest(latlng[0], latlng[1], 100)
 
         if not results:
-            #the flash line was breaking the code
-            #flash("No results found!")
+            flash("No results found!")
             return redirect("/")
 
     earthquakes = []
-    if len(results) != 0:
-        for r in results:
-            earthquakes.append(r.__dict__)
+    for r in results:
+        earthquakes.append(r.__dict__)
 
     json_str = json.dumps(earthquakes, indent=4, sort_keys=True, default=str)
     print(json_str)
-
-    sform.process()
-
 
     # Requests data for the live feed.
     all_quakes = get_latest_quakes()
@@ -195,7 +268,7 @@ def index():
         center=center,
     )
 
+
 if __name__ == "__main__":
     app.run(debug=True)
-    app.secret_key = 'super secret key'
-    app.config['SESSION_TYPE'] = 'filesystem'
+
