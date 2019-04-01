@@ -168,7 +168,7 @@ def index():
         if not results:
             #the flash line was breaking the code
             #flash("No results found!")
-            return redirect("/")
+            center = {"latitude": latlng[0], "longitude": latlng[1]}
 
     earthquakes = []
     if len(results) != 0:
