@@ -77,27 +77,43 @@
         }
       });
 
-    // if (earthquakes.length > 1) {
-    //   map.fitBounds(bounds);
-    // }
     // var bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < earthquakes.length; i++) {
-      // var position = new google.maps.LatLngBounds(earthquakes[i].latitude, earthquakes[i].longitude);
+      var contentString = "<p>Location: <strong>" + earthquakes[i].title + "</strong>" +
+          "<br> Magnitude: <strong>" + earthquakes[i].magnitude +"</strong>";
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
       marker = new google.maps.Marker({
         position: { lat: earthquakes[i].latitude, lng: earthquakes[i].longitude },
         map: map,
         title: earthquakes[i].title,
         animation: google.maps.Animation.DROP,
       });
+      google.maps.event.addListener(marker,'click', (function(marker, infowindow) { 
+        return function() {
+              infowindow.open(map,marker);
+          };
+      })(marker,infowindow));
+      var circle = new google.maps.Circle({
+        strokeColor: '#960200',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#960200',
+        fillOpacity: 0.15,
+        map: map,
+        center:  { lat: earthquakes[i].latitude, lng: earthquakes[i].longitude },
+        radius: earthquakes[i].magnitude * 10000,
+      });
       // bounds.extend(position);
     }
     // map.fitBounds(position);
 
     var circle = new google.maps.Circle({
-      strokeColor: '#FF0000',
+      strokeColor: '#FCDC4D',
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: '#FF0000',
+      fillColor: '#FCDC4D',
       fillOpacity: 0.15,
       map: map,
       center: center,
