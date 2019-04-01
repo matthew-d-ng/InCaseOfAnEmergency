@@ -90,7 +90,7 @@ def find_nearest(latitude, longitude, distance):
 
     query = "SELECT id, place, mag, time, latitude, longitude, \
             depth FROM earthquakes WHERE \
-            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 100"
+            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 1"
     logging.info(query)
     cur.execute(query, (latitude, longitude))
     results = cur.fetchall()

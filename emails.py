@@ -2,7 +2,7 @@ import yagmail, math
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
 from wtforms import Form, StringField, validators
-import geocoder
+import geocoder, geopy
 from flask_mysqldb import MySQL
 
 EMAIL = "incaseofanemergencySWE@gmail.com"
@@ -19,7 +19,6 @@ class email_reciever:
         self.location = location
 
 def get_mailing_list():
-    '''
     cur = mysql.connect.cursor()
     query = 'SELECT * FROM MailingList'
  
@@ -31,10 +30,7 @@ def get_mailing_list():
         email_reciever(user[0], user[1], user[2])
 
     return user_list
-    '''
-    
-    test_user = email_reciever("omullan99@gmail.com", 4.5, "Tokyo, Japan")
-    return [test_user]
+
 
 def get_refined_mailing_list():
     full_mailing_list = get_mailing_list()
@@ -66,8 +62,10 @@ def send_emails():
 
 
 def is_within_radius(centre_lat, centre_long, radius, input_lat, input_long):
-    distance = math.sqrt((input_lat - centre_lat)**2 + (input_long - centre_long)**2)
-    if((distance) / 111 <= radius):
+    coords_1 = [centre_lat, centre_long]
+    coords_2 = [input_lat, input_long]
+    distance = geopy.distance.distance(coords_1, coords_2)
+    if((distance) <= radius):
         return True
     else:
         return False  
