@@ -32,7 +32,15 @@
     <li>{{eq.time_string() + " : " + eq.title}}</li>
     {% endfor %}
   </ul> -->
-
+  <div id="feed">
+    <h2>Live Earthquake Feed</h2>
+      <ul class="list-group">
+        {% for eq in earthQuakeList %}
+        <li class="list-group-item">{{eq.time_string() + " : " + eq.title}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 
 <div id="mailing">
   <h3>Subscribe to Alerts Mailing List!</h3>
@@ -53,7 +61,13 @@
     </form>
   </div>
 
-  <a href="/realtime.html">realtime feed</a>
+  <div id="footer">
+    <p style="text-align: center;">
+      In Case of Emergency | Software Engineering Group Project | Group 22
+    </p>
+  </div>
+  <!-- <a href="/realtime.html">realtime feed</a> -->
+
 </body>
 
 <script>
