@@ -16,7 +16,7 @@ from wtforms import Form, StringField, validators
 from flask_mysqldb import MySQL
 from feed_reader import get_latest_quakes
 from earthquake import Earthquake
-from emails import email_form
+from emails import email_form, send_welcome_email
 
 import logging
 import datetime
@@ -134,6 +134,7 @@ def subscribe():
         res = cur.execute(query)
         con.commit()
         print(res)
+        send_welcome_email(email)
 
     return redirect("/")
 
