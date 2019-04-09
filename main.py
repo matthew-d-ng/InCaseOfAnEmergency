@@ -88,18 +88,25 @@ def find_nearest(latitude, longitude, distance):
     # p = (p1, p2) ; q = (q1, q2)
     # d = sqrt((q1-p1)^2 + (q2-p2)^2)
     d_sqrd = distance * distance
+   
+    #query = "SELECT timestamp, latitude, longitude, depth, mag, id, \
+    #        title FROM earthquakes WHERE \
+    #        POW(latitude-{}, 2) + POW({}-longitude, 2) <= 1".format(latitude, longitude)
 
-    query = "SELECT id, place, mag, time, latitude, longitude, \
-            depth FROM earthquakes WHERE \
-            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 1"
+    query = "SELECT timestamp, latitude, longitude, depth, mag, id, title FROM earthquakes WHERE POW(latitude - {}, 2) + POW({} - longitude, 2) <= 1".format(longitude, latitude)
+    
     logging.info(query)
-    cur.execute(query, (latitude, longitude))
+
+    cur.execute(query)
+    #cur.execute(query, (latitude, longitude))
     results = cur.fetchall()
 
     # Create an array of all the earthquake occurrences.
+    print("here!")
     occurences = []
     for occ in results:
         # [TODO] added a temp ID.
+        print(occ[6])
         occurences.append(
             Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6])
         )

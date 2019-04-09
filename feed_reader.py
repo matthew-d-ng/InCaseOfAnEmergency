@@ -22,7 +22,7 @@ def parse_listing(listing):
     longitude = location[1]
     depth = location[2]
 
-    new_quake = Earthquake(db_id, title, magnitude, timestamp, latitude, longitude, depth)
+    new_quake = Earthquake(timestamp, latitude, longitude, depth, magnitude, db_id, title)
     return new_quake
 
 
