@@ -15,7 +15,7 @@ class Earthquake:
         self.depth = depth
 
     def time_string(self):
-        return self.timestamp.strftime("%d-%m-%Y %H:%M:%S")
+        return self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
     
     # Dumps this object as a json.
     def toJSON(self):
