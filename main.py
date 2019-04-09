@@ -54,6 +54,8 @@ app.config["MYSQL_INIT_COMMAND"] = "SET character_set_connection=utf8mb4;"
 app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_SERVER = utf8mb4;"
 app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_DATABASE = utf8mb4;"
 
+monitor = db_realtime()
+monitor.start()
 mysql.init_app(app)
 
 # Find the distance between two places given their latitude and longitude.
@@ -97,13 +99,13 @@ def find_nearest(latitude, longitude, distance):
 
     query = "SELECT id, title, mag, timestamp, latitude, longitude, depth \
             FROM earthquakes WHERE \
-            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 1000 \
+            POW(longitude-%s, 2) + POW(latitude-%s, 2) <= 1000 \
             AND timestamp >= STR_TO_DATE(%s, '%%Y-%%m-%%d')"
     print(query)
-    cur.execute(query, (latitude, longitude, date))
+    cur.execute(query, (longitude, latitude, date))
     results = cur.fetchall()
     logging.info(results)
-
+    cur.close()
 
     # Create an array of all the earthquake occurrences.
     print("here!")
@@ -215,5 +217,3 @@ if __name__ == "__main__":
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
 
-    monitor = db_realtime()
-    monitor.run()
