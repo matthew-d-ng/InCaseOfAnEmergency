@@ -24,6 +24,7 @@ import dateutil.parser
 import math
 import geocoder
 import json
+from db_realtime_updater import db_realtime
 
 app = Flask(__name__)
 
@@ -105,9 +106,11 @@ def find_nearest(latitude, longitude, distance):
 
 
     # Create an array of all the earthquake occurrences.
+    print("here!")
     occurences = []
     for occ in results:
         # [TODO] added a temp ID.
+        print(occ[6])
         occurences.append(
             Earthquake(occ[0], occ[1], occ[2], occ[3], occ[4], occ[5], occ[6])
         )
@@ -211,3 +214,6 @@ if __name__ == "__main__":
     app.run(debug=True)
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
+
+    monitor = db_realtime()
+    monitor.run()
