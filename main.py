@@ -34,15 +34,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-#app.config['MYSQL_HOST'] = '146.185.180.168'
-#app.config['MYSQL_USER'] = 'sulla'
-#app.config['MYSQL_PASSWORD'] = '22.22.22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+app.config['MYSQL_HOST'] = '146.185.180.168'
+app.config['MYSQL_USER'] = 'sulla'
+app.config['MYSQL_PASSWORD'] = 'sulla' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+# app.config["MYSQL_HOST"] = "localhost"
+# app.config["MYSQL_USER"] = "root"
+# app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -86,14 +86,23 @@ def find_nearest(latitude, longitude, distance):
     # Euclidean distance b/w two points.
     # p = (p1, p2) ; q = (q1, q2)
     # d = sqrt((q1-p1)^2 + (q2-p2)^2)
-    d_sqrd = distance * distance
+    # d_sqrd = distance * distance
 
-    query = "SELECT id, place, mag, time, latitude, longitude, \
-            depth FROM earthquakes WHERE \
-            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 1"
-    logging.info(query)
-    cur.execute(query, (latitude, longitude))
+    last_month = datetime.datetime.now() - dateutil.relativedelta.relativedelta(months=6)
+    last_month_first_date = last_month.replace(day=1)
+    date = last_month_first_date.strftime("%Y-%m-%d")
+    date_format = "%%Y-%%m-%%d"
+    print(date)
+
+    query = "SELECT id, title, mag, timestamp, latitude, longitude, depth \
+            FROM earthquakes WHERE \
+            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 100 \
+            AND timestamp >= STR_TO_DATE(%s, '%%Y-%%m-%%d')"
+    print(query)
+    cur.execute(query, (latitude, longitude, date))
     results = cur.fetchall()
+    logging.info(results)
+
 
     # Create an array of all the earthquake occurrences.
     occurences = []
@@ -160,6 +169,7 @@ def index():
         coords = geocoder.google(loc)
         sform.location.default = coords.city
         latlng = coords.latlng
+        print(coords)
         # Set centre as the search location.
         center = {"latitude": latlng[0], "longitude": latlng[1]}
         print(coords, " ", latlng[1], " ", latlng[0])
