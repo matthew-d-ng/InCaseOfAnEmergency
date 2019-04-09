@@ -4,14 +4,15 @@ from earthquake import Earthquake
 from wtforms import Form, StringField, validators
 import geocoder, geopy, mysql.connector
 from flask_mysqldb import MySQL
+import config
 
 EMAIL = "incaseofanemergencySWE@gmail.com"
 PASSWORD = "aeamthhhkrowsjdm"
 
 #replace with your local credentials or sullas server ones
-mysql = mysql.connector.connect(user='root', password='pass',
-                              host='localhost',
-                              database='icoe')
+mysql = mysql.connector.connect(user=config.user, password=config.password,
+                              host=config.host,
+                              database=config.db)
 
 class email_form(Form):
     email = StringField('Email Address', [validators.Length(min=6, max=35)])

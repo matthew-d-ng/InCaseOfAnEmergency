@@ -20,30 +20,35 @@ icoe = mysql.connector.connect(user=config.user, password=config.password,\
 
 class db_realtime(threading.Thread):
     def __init__(self):
-        super(db_realtime, self).__init__()
-    
+        threading.Thread.__init__(self)
+
     def run(self):
         monitor_feed()
 
 def db_has_earthquake(earthquake):
     """ Return boolean """
     # SELECT EXISTS(SELECT * from ExistsRowDemo WHERE ExistId=105);
-    try:
-        cursor = icoe.cursor()
+    cursor = icoe.cursor() 
+    try:    
         sql_insert_query = """ SELECT * from earthquakes WHERE id=%s """
         insert_tuple = (earthquake.id,)
         cursor.execute(sql_insert_query, insert_tuple)
-        icoe.commit()
+        result = cursor.fetchall()
     except (mysql.connector.Error) as error:
         icoe.rollback()
         print("Failed to insert into MySQL table {}".format(error))
+    finally:
+        if icoe.is_connected():
+            cursor.close()
 
-    return cursor.rowcount > 0
+    return len(result) > 0
+
 
 def insert_to_db(earthquake):
 
+    print("Updating db")
+    cursor = icoe.cursor()
     try:
-        cursor = icoe.cursor()
         sql_insert_query = """ INSERT INTO `earthquakes`
                             (`timestamp`, `latitude`, `longitude`, `depth`, `mag`, `id`, `title`) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
         insert_tuple = (earthquake.time_string(), earthquake.latitude, earthquake.longitude, earthquake.depth, earthquake.magnitude, earthquake.id, earthquake.title)
@@ -52,6 +57,9 @@ def insert_to_db(earthquake):
     except (mysql.connector.Error) as error:
         icoe.rollback()
         print("Failed to insert into MySQL table {}".format(error))
+    finally:
+        if icoe.is_connected():
+            cursor.close()
     
 
 def notify_mailing_list(earthquake):
@@ -60,7 +68,7 @@ def notify_mailing_list(earthquake):
 def monitor_feed():
     # Infinitely loop, sleep for WAIT_TIME seconds after every iteration
     while True:
-
+        print("Checking feed")
         response = requests.get(FEED)
         latest_quakes = json.loads(response.text)
         for listing in latest_quakes['features']:
