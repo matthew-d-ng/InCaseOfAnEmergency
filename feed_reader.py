@@ -3,7 +3,7 @@ import requests, json, geocoder
 from datetime import datetime
 import math
 
-FEED = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson"
+FEED = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson"
 
 def parse_listing(listing):
     """ Return Earthquake object """
@@ -18,8 +18,8 @@ def parse_listing(listing):
     timestamp = datetime.utcfromtimestamp(raw_time)
 
     location = listing["geometry"]["coordinates"]
-    latitude = location[0]
-    longitude = location[1]
+    latitude = location[1]
+    longitude = location[0]
     depth = location[2]
 
     new_quake = Earthquake(db_id, title, magnitude, timestamp, latitude, longitude, depth)
