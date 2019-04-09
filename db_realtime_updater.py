@@ -3,13 +3,22 @@ from earthquake import Earthquake
 import requests, json
 from feed_reader import parse_listing
 from emails import send_emails
+import threading
 # import the sql connector we're using too
 
-""" Checks the Atom feed from USGS every 15 minutes """
+""" Checks the GeoJSON feed from USGS every 15 minutes """
 
 FEED = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson"
 WAIT_TIME = 900  # 900 seconds = 15 minutes, can just change this to less if we want
 MIN_MAG = 5
+
+class db_realtime(threading.Thread):
+
+    def __init__(self):
+        super(db_realtime, self).__init__()
+    
+    def run(self):
+        monitor_feed()
 
 
 def db_has_earthquake(earthquake):
@@ -58,4 +67,6 @@ def test_feed():
         print(earthquake.longitude)
         print(earthquake.depth, "\n")
 
-test_feed()
+
+if __name__ == "__main__":
+    test_feed()
