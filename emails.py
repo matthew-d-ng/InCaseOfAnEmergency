@@ -9,7 +9,7 @@ EMAIL = "incaseofanemergencySWE@gmail.com"
 PASSWORD = "aeamthhhkrowsjdm"
 
 #replace with your local credentials or sullas server ones
-mysql = mysql.connector.connect(user='root', password='Matchattax1999!',
+mysql = mysql.connector.connect(user='root', password='pass',
                               host='localhost',
                               database='icoe')
 

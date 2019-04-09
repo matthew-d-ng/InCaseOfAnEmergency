@@ -43,7 +43,7 @@ mysql = MySQL()
 # To run locally, uncomment the lines below:
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "Matchattax1999!"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
