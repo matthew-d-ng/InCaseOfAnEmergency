@@ -96,7 +96,7 @@ def find_nearest(latitude, longitude, distance):
 
     query = "SELECT id, title, mag, timestamp, latitude, longitude, depth \
             FROM earthquakes WHERE \
-            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 100 \
+            POW(latitude-%s, 2) + POW(%s-longitude, 2) <= 1000 \
             AND timestamp >= STR_TO_DATE(%s, '%%Y-%%m-%%d')"
     print(query)
     cur.execute(query, (latitude, longitude, date))
