@@ -9,7 +9,7 @@ EMAIL = "incaseofanemergencySWE@gmail.com"
 PASSWORD = "aeamthhhkrowsjdm"
 
 #replace with your local credentials or sullas server ones
-mysql = mysql.connector.connect(user='root', password='pass',
+mysql = mysql.connector.connect(user='root', password='Matchattax1999!',
                               host='localhost',
                               database='icoe')
 
@@ -28,7 +28,7 @@ def get_mailing_list():
     query = ("SELECT * FROM MailingList;")
     cur.execute(query)
     records = cur.fetchall()
-    
+
     user_list = []
     for row in records:
         temp = email_reciever(row[0], row[1], row[2], row[3])
@@ -60,7 +60,7 @@ def send_emails():
     yag = yagmail.SMTP(EMAIL, PASSWORD)
     body = get_earthquake_info()
     if(len(mailing_list) > 0):
-        yag.send(mailing_list, 'Realtime earthquake notification!', body) 
+        yag.send(mailing_list, 'Realtime earthquake notification!', body)
     else:
         print("Empty mailing list")
 
@@ -76,4 +76,4 @@ def is_within_radius(centre_lat, centre_long, radius, input_lat, input_long):
     if((distance) <= radius):
         return True
     else:
-        return False  
+        return False

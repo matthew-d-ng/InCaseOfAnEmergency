@@ -42,7 +42,7 @@ mysql = MySQL()
 # To run locally, uncomment the lines below:
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+app.config["MYSQL_PASSWORD"] = "Matchattax1999!"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -155,7 +155,7 @@ def index():
 
     sform.location.default = "Dublin, Ireland"
 
-    if request.method == "POST" and sform.validate():        
+    if request.method == "POST" and sform.validate():
         loc = sform.location.data
         coords = geocoder.google(loc)
         sform.location.default = coords.city
