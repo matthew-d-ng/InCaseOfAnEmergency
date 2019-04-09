@@ -5,18 +5,17 @@ import json
 
 class Earthquake:
 
-    def __init__(self, timestamp, latitude, longitude, depth, magnitude, db_id, title):
+    def __init__(self, db_id, title, magnitude, timestamp, latitude, longitude, depth):
+        self.id = db_id
+        self.title = title
+        self.__set_magnitude(magnitude)
         self.__set_timestamp(timestamp)
         self.__set_latitude(latitude)
         self.__set_longitude(longitude)
-        self.__set_magnitude(magnitude)
         self.depth = depth
-        self.id = db_id
-        self.title = title
-        
 
     def time_string(self):
-        return self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        return self.timestamp.strftime("%d-%m-%Y %H:%M:%S")
     
     # Dumps this object as a json.
     def toJSON(self):
