@@ -94,7 +94,8 @@
     // var bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < earthquakes.length; i++) {
       var contentString = "<p>Location: <strong>" + earthquakes[i].title + "</strong>" +
-          "<br> Magnitude: <strong>" + earthquakes[i].magnitude +"</strong>";
+          "<br> Magnitude: <strong>" + earthquakes[i].magnitude +"</strong>" +
+          "<br> Date: <strong>" + earthquakes[i].timestamp +"</strong>";
       var infowindow = new google.maps.InfoWindow({
         content: contentString
     });
