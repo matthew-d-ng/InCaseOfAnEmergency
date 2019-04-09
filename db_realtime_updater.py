@@ -3,26 +3,56 @@ from earthquake import Earthquake
 import requests, json
 from feed_reader import parse_listing
 from emails import send_emails
+import threading
+import mysql.connector
+import config
 # import the sql connector we're using too
 
-""" Checks the Atom feed from USGS every 15 minutes """
+""" Checks the GeoJSON feed from USGS every 15 minutes """
 
 FEED = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson"
 WAIT_TIME = 900  # 900 seconds = 15 minutes, can just change this to less if we want
 MIN_MAG = 5
 
+icoe = mysql.connector.connect(user=config.user, password=config.password,\
+                                host=config.host, database=config.db,\
+                                auth_plugin='mysql_native_password')
+
+class db_realtime(threading.Thread):
+    def __init__(self):
+        super(db_realtime, self).__init__()
+    
+    def run(self):
+        monitor_feed()
 
 def db_has_earthquake(earthquake):
     """ Return boolean """
+    # SELECT EXISTS(SELECT * from ExistsRowDemo WHERE ExistId=105);
+    try:
+        cursor = icoe.cursor()
+        sql_insert_query = """ SELECT * from earthquakes WHERE id=%s """
+        insert_tuple = (earthquake.id,)
+        cursor.execute(sql_insert_query, insert_tuple)
+        icoe.commit()
+    except (mysql.connector.Error) as error:
+        icoe.rollback()
+        print("Failed to insert into MySQL table {}".format(error))
 
-    # sql query code - is there a result for this ID?
-    # *We need to check that the IDs are actually consistent
-    return True
+    return cursor.rowcount > 0
 
-def add_to_db(earthquake):
+def insert_to_db(earthquake):
 
-    # sql insert to Earthquake table code
-    pass     # placeholder, remove return when body written
+    try:
+        cursor = icoe.cursor()
+        sql_insert_query = """ INSERT INTO `earthquakes`
+                            (`timestamp`, `latitude`, `longitude`, `depth`, `mag`, `id`, `title`) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+        insert_tuple = (earthquake.time_string(), earthquake.latitude, earthquake.longitude, earthquake.depth, earthquake.magnitude, earthquake.id, earthquake.title)
+        cursor.execute(sql_insert_query, insert_tuple)
+        icoe.commit()
+    except (mysql.connector.Error) as error:
+        icoe.rollback()
+        print("Failed to insert into MySQL table {}".format(error))
+    
 
 def notify_mailing_list(earthquake):
     send_emails()
@@ -37,7 +67,7 @@ def monitor_feed():
 
             earthquake = parse_listing(listing)
             if earthquake.magnitude >= MIN_MAG and not db_has_earthquake(earthquake):
-                add_to_db(earthquake)
+                insert_to_db(earthquake)
                 notify_mailing_list(earthquake)
 
         time.sleep(WAIT_TIME)
@@ -57,5 +87,8 @@ def test_feed():
         print(earthquake.latitude)
         print(earthquake.longitude)
         print(earthquake.depth, "\n")
+        print(db_has_earthquake(earthquake))
 
-test_feed()
+
+if __name__ == "__main__":
+    test_feed()

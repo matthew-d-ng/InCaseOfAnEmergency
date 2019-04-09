@@ -24,6 +24,7 @@ import dateutil.parser
 import math
 import geocoder
 import json
+from db_realtime_updater import db_realtime
 
 app = Flask(__name__)
 
@@ -208,3 +209,6 @@ if __name__ == "__main__":
     app.run(debug=True)
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
+
+    monitor = db_realtime()
+    monitor.run()
