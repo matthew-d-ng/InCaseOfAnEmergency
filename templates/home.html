@@ -57,8 +57,15 @@
             <label for="exampleFormControlInput1">Minimum magnitude:</label>
             {{ mailingform.magnitude(class_="form-control") }}
           </div>
-      <button type="submit" class="btn btn-secondary">Submit</button>
+      <button id="mailingButton" type="submit" class="btn btn-secondary">Submit</button>
     </form>
+  </div>
+
+  <div id="emailModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>You are now registered!</p>
+    </div>
   </div>
 
   <div id="footer">
@@ -104,7 +111,7 @@
         title: earthquakes[i].title,
         animation: google.maps.Animation.DROP,
       });
-      google.maps.event.addListener(marker,'click', (function(marker, infowindow) { 
+      google.maps.event.addListener(marker,'click', (function(marker, infowindow) {
         return function() {
               infowindow.open(map,marker);
           };
@@ -133,10 +140,27 @@
       center: center,
       radius: 100 * 1000,
     });
-  
-    };   
+
+    };
   </script>
+
   <script src="https://maps.googleapis.com/maps/api/js?key={{APIKEY}}&callback=myMap"></script>
 
+  <script>
+    var modal= document.getElementById("emailModal");
+    var button = document.getElementById("mailingButton");
+    var span = document.getElementsByClassName("close")[0];
+    button.onclick = function(){
+      modal.style.display = "block";
+    }
+    span.onclick = function(){
+      modal.style.display = "none";
+    }
+    window.onclick = function(event){
+      if(event.target == modal){
+        modal.style.display = "none";
+      }
+    }
+  </script>
 
 </html>
