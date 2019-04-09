@@ -139,7 +139,7 @@ def subscribe():
 
         con = mysql.connect
         cur = con.cursor()
-        query = 'INSERT INTO mailinglist (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
+        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
             email=email, loc=loc, mag=mag
         )
         print(query)
