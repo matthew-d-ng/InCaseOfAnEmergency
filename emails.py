@@ -8,6 +8,7 @@ import config
 
 EMAIL = "incaseofanemergencySWE@gmail.com"
 PASSWORD = "aeamthhhkrowsjdm"
+HOST_DNS = "localhost:8080"
 
 #replace with your local credentials or sullas server ones
 mysql = mysql.connector.connect(user=config.user, password=config.password,
@@ -62,7 +63,12 @@ def send_emails():
     yag = yagmail.SMTP(EMAIL, PASSWORD)
     body = get_earthquake_info()
     if(len(mailing_list) > 0):
-        yag.send(mailing_list, 'Realtime earthquake notification!', body)
+        for u in mailing_list:
+            unsubscribe_link = '<a href="' + HOST_DNS \
+                    +'/unsubscribe?email=' \
+                    +  u \
+                    + '">unsubscribe</a>' 
+            yag.send(u, 'Realtime earthquake notification!', [body, unsubscribe_link])
     else:
         print("Empty mailing list")
 
