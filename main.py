@@ -35,15 +35,15 @@ mysql = MySQL()
 
 # MySQL is running on port 3306, w/c TCD blocks. Fix: Conenct to a different Wifi.
 # To connect to our remote server, uncomment the lines below:
-#app.config['MYSQL_HOST'] = '146.185.180.168'
-#app.config['MYSQL_USER'] = 'sulla'
-#app.config['MYSQL_PASSWORD'] = '22.22.22' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
+app.config['MYSQL_HOST'] = '146.185.180.168'
+app.config['MYSQL_USER'] = 'sulla'
+app.config['MYSQL_PASSWORD'] = 'sulla' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+# app.config["MYSQL_HOST"] = "localhost"
+# app.config["MYSQL_USER"] = "root"
+# app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -54,6 +54,8 @@ app.config["MYSQL_INIT_COMMAND"] = "SET character_set_connection=utf8mb4;"
 app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_SERVER = utf8mb4;"
 app.config["MYSQL_INIT_COMMAND"] = "SET SESSION CHARACTER_SET_DATABASE = utf8mb4;"
 
+monitor = db_realtime()
+monitor.start()
 mysql.init_app(app)
 
 # Find the distance between two places given their latitude and longitude.
@@ -87,19 +89,23 @@ def find_nearest(latitude, longitude, distance):
     # Euclidean distance b/w two points.
     # p = (p1, p2) ; q = (q1, q2)
     # d = sqrt((q1-p1)^2 + (q2-p2)^2)
-    d_sqrd = distance * distance
-   
-    #query = "SELECT timestamp, latitude, longitude, depth, mag, id, \
-    #        title FROM earthquakes WHERE \
-    #        POW(latitude-{}, 2) + POW({}-longitude, 2) <= 1".format(latitude, longitude)
+    # d_sqrd = distance * distance
 
-    query = "SELECT timestamp, latitude, longitude, depth, mag, id, title FROM earthquakes WHERE POW(latitude - {}, 2) + POW({} - longitude, 2) <= 1".format(longitude, latitude)
-    
-    logging.info(query)
+    last_month = datetime.datetime.now() - dateutil.relativedelta.relativedelta(months=6)
+    last_month_first_date = last_month.replace(day=1)
+    date = last_month_first_date.strftime("%Y-%m-%d")
+    date_format = "%%Y-%%m-%%d"
+    print(date)
 
-    cur.execute(query)
-    #cur.execute(query, (latitude, longitude))
+    query = "SELECT id, title, mag, timestamp, latitude, longitude, depth \
+            FROM earthquakes WHERE \
+            POW(longitude-%s, 2) + POW(latitude-%s, 2) <= 1000 \
+            AND timestamp >= STR_TO_DATE(%s, '%%Y-%%m-%%d')"
+    print(query)
+    cur.execute(query, (longitude, latitude, date))
     results = cur.fetchall()
+    logging.info(results)
+    cur.close()
 
     # Create an array of all the earthquake occurrences.
     print("here!")
@@ -135,7 +141,7 @@ def subscribe():
 
         con = mysql.connect
         cur = con.cursor()
-        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
+        query = 'INSERT INTO mailinglist (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
             email=email, loc=loc, mag=mag
         )
         print(query)
@@ -168,6 +174,7 @@ def index():
         coords = geocoder.google(loc)
         sform.location.default = coords.city
         latlng = coords.latlng
+        print(coords)
         # Set centre as the search location.
         center = {"latitude": latlng[0], "longitude": latlng[1]}
         print(coords, " ", latlng[1], " ", latlng[0])
@@ -210,5 +217,3 @@ if __name__ == "__main__":
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
 
-    monitor = db_realtime()
-    monitor.run()
