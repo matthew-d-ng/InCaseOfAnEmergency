@@ -18,11 +18,10 @@ class email_form(Form):
     email = StringField('Email Address', [validators.Length(min=6, max=35)])
 
 class email_reciever:
-    def __init__(self, id,  email, magnitude, location):
-        self.id = id
+    def __init__(self,  email, location, magnitude):
         self.email = email
-        self.magnitude = magnitude
         self.location = location
+        self.magnitude = magnitude
 
 
 def get_mailing_list():
@@ -33,7 +32,7 @@ def get_mailing_list():
 
     user_list = []
     for row in records:
-        temp = email_reciever(row[0], row[1], row[2], row[3])
+        temp = email_reciever(row[0], row[1], row[2])
         user_list.append(temp)
     return user_list
 
@@ -79,3 +78,5 @@ def is_within_radius(centre_lat, centre_long, radius, input_lat, input_long):
         return True
     else:
         return False
+
+print(get_mailing_list())
