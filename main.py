@@ -91,7 +91,7 @@ def find_nearest(latitude, longitude, distance):
     # d = sqrt((q1-p1)^2 + (q2-p2)^2)
     # d_sqrd = distance * distance
 
-    last_month = datetime.datetime.now() - dateutil.relativedelta.relativedelta(months=6)
+    last_month = datetime.datetime.now() - dateutil.relativedelta.relativedelta(months=3)
     last_month_first_date = last_month.replace(day=1)
     date = last_month_first_date.strftime("%Y-%m-%d")
     date_format = "%%Y-%%m-%%d"
@@ -129,6 +129,16 @@ class MailingForm(Form):
     location = StringField("location", [validators.DataRequired()])
     magnitude = StringField("magnitude", [validators.DataRequired()])
 
+@app.route("/unsubscribe", methods=["GET", "POST"])
+def unsubscribe():
+    email = request.args.get('email')
+    con = mysql.connect
+    cur = con.cursor()
+    query = 'DELETE FROM MailingList WHERE email="' + email + '"'
+    print(query)
+    cur.execute(query)
+    con.commit()
+    return render_template("unsubscribed.html")
 
 @app.route("/subscribe", methods=["GET", "POST"])
 def subscribe():
@@ -141,7 +151,7 @@ def subscribe():
 
         con = mysql.connect
         cur = con.cursor()
-        query = 'INSERT INTO mailinglist (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
+        query = 'INSERT INTO MailingList (email, location, magnitude) VALUES ("{email}", "{loc}", {mag});'.format(
             email=email, loc=loc, mag=mag
         )
         print(query)

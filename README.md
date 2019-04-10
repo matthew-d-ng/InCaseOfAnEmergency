@@ -46,3 +46,6 @@ The MySQL database contains historical earthquake data from 1900-present.
 ### APIs/Services used:
 - MySQL
 - [ANSS Comprehensive Earthquake Catalogue (ComCat)](https://earthquake.usgs.gov/data/comcat/)
+
+### Setting up the Mailing System
+Change HOST_DNS in emails.py to the actual DNS of the server the website is running on.
