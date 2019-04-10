@@ -41,9 +41,9 @@ app.config['MYSQL_PASSWORD'] = 'sulla' # PLEASE DO NOT PUSH THE ACTUAL VALUE TO 
 # -----------------------------------------------------------------------------------
 
 # To run locally, uncomment the lines below:
-# app.config["MYSQL_HOST"] = "localhost"
-# app.config["MYSQL_USER"] = "root"
-# app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
+#app.config["MYSQL_HOST"] = "localhost"
+#app.config["MYSQL_USER"] = "root"
+#app.config["MYSQL_PASSWORD"] = "pass"  # Change to your own root password. DO NOT PUSH TO GITHUB.
 # -----------------------------------------------------------------------------------
 
 app.config["MYSQL_DB"] = "icoe"
@@ -99,7 +99,7 @@ def find_nearest(latitude, longitude, distance):
 
     query = "SELECT id, title, mag, timestamp, latitude, longitude, depth \
             FROM earthquakes WHERE \
-            POW(longitude-%s, 2) + POW(latitude-%s, 2) <= 1000 \
+            POW(longitude-%s, 2) + POW(latitude-%s, 2) <= 1 \
             AND timestamp >= STR_TO_DATE(%s, '%%Y-%%m-%%d')"
     print(query)
     cur.execute(query, (longitude, latitude, date))
